@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insight — Impressão 3D</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel = "icon" href = "assets/image/insight-logo.jpg">
+
+</head>
+<body>
+<header class="nav">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%">
+    <img class="logo" src="assets/image/insight-logo.jpg" alt="Insight">
+    <nav class="navlinks">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#imprimir">Imprimir</a>
+      <a href="#pedido">Acompanhar</a>
+    </nav>
+    <a class="btn dark" href="#imprimir">Começar</a>
+  </div>
+</header>
+
+<main>
+<section class="container hero">
+  <div>
+    <div class="kicker">Insight / Impressão 3D</div>
+    <h1>Sua ideia.<br>Em 3D.</h1>
+    <p>Envie seu modelo, configure a impressão e transforme um arquivo digital em uma peça física.</p>
+    <div class="actions">
+      <a class="btn dark" href="#imprimir">Começar uma impressão →</a>
+      <a class="btn light" href="#como-funciona">Como funciona</a>
+    </div>
+  </div>
+  <div class="hero-art">
+    <div class="bolt">ϟ</div>
+    <div class="big-mark">3D<br>INSIGHT</div>
+  </div>
+</section>
+
+<section id="como-funciona" class="section">
+<div class="container">
+  <div class="section-head">
+    <h2>Do arquivo<br>à peça.</h2>
+    <p>Fluxo de trabalho da Insight.</p>
+  </div>
+  <div class="steps">
+    <article class="card"><div class="num">01</div><h3>Envie</h3><p>Faça upload do modelo 3D e deixe o arquivo pronto para análise.</p></article>
+    <article class="card"><div class="num">02</div><h3>Configure</h3><p>Defina material, qualidade, cor, quantidade e acabamento.</p></article>
+    <article class="card"><div class="num">03</div><h3>Produza</h3><p>Veja uma estimativa e acompanhe o pedido até a finalização.</p></article>
+  </div>
+</div>
+</section>
+
+<section id="galeria" class="section">
+<div class="container">
+  <div class="section-head">
+    <h2>Peças já<br>impressas.</h2>
+    <p>Uma amostra de trabalhos produzidos pela Insight.</p>
+  </div>
+  <div id="gallery-grid" class="gallery-grid">
+    <!-- itens injetados via JS a partir de galleryItems, ver script no fim do body -->
+  </div>
+</div>
+</section>
+
+<section id="imprimir" class="section">
+<div class="container">
+  <div class="section-head">
+    <h2>Comece<br>a imprimir.</h2>
+    <p>Atendemos em todo o Brasil.</p>
+  </div>
+  <div class="print">
+    <div class="upload">
+      <div>
+        <div class="kicker">Arquivo 3D</div>
+        <h3>Solte seu<br>modelo aqui.</h3>
+      </div>
+      <div class="drop">Arraste STL, 3MF ou OBJ<br><small>ou selecione um arquivo</small></div>
+    </div>
+    <div class="quote">
+      <div class="kicker">Estimativa</div>
+      <div class="quote-row"><span>Material</span><strong>PLA</strong></div>
+      <div class="quote-row"><span>Qualidade</span><strong>0,20 mm</strong></div>
+      <div class="quote-row"><span>Quantidade</span><strong>1 peça</strong></div>
+      <div class="quote-row"><span>Prazo estimado</span><strong>3–5 dias</strong></div>
+      <div style="margin-top:25px"><div class="kicker">A partir de</div><div class="price">R$ 00,00</div></div>
+      <a class="btn dark" style="margin-top:24px;width:100%" href="#pedido">Solicitar impressão</a>
+    </div>
+  </div>
+</div>
+</section>
+
+<section id="pedido" class="section">
+<div class="container">
+  <div class="section-head">
+    <h2>Acompanhe<br>o pedido.</h2>
+    <p>Impressão 3D de alta qualidade.</p>
+  </div>
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap">
+      <div><div class="kicker">Pedido #001</div><h3 style="font-family:'Barlow Condensed';font-size:42px;text-transform:uppercase;margin:8px 0">Em produção</h3></div>
+      <span class="status">EM PRODUÇÃO</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:30px">
+      <div><strong>01</strong><br><small>Recebido</small></div>
+      <div><strong>02</strong><br><small>Análise</small></div>
+      <div><strong>03</strong><br><small>Aprovado</small></div>
+      <div><strong>04</strong><br><small>Produção</small></div>
+      <div><strong>05</strong><br><small>Finalizado</small></div>
+    </div>
+  </div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+  <img src="assets/image/insight-logo.jpg" alt="Insight" style="height:48px;filter:invert(1);mix-blend-mode:screen">
+  <small>Insight — Do arquivo à peça.</small>
+</div>
+</footer>
+
+<script>
+  // Galeria de trabalhos já feitos.
+  // Para adicionar uma nova peça, basta acrescentar um novo objeto neste array —
+  // nenhuma alteração de HTML/CSS é necessária. Quando houver backend, este
+  // array pode ser substituído por um fetch() que retorna a mesma estrutura.
+  const galleryItems = [
+    {
+      title: "Invincible",
+      img: "assets/image/gallery/invincible.jpeg",
+      tags: ["Estátua colecionável", "Multicolor"]
+    },
+    {
+      title: "Miolo de roda Ford",
+      img: "assets/image/gallery/ford-miolo-roda.png",
+      tags: ["PETG", "Automotivo"]
+    },
+    {
+      title: "Cthulhu",
+      img: "assets/image/gallery/cthulhu.png",
+      tags: ["Resina", "Miniatura"]
+    }
+  ];
+
+  function renderGallery(items) {
+    const grid = document.getElementById("gallery-grid");
+    if (!grid) return;
+
+    if (!items || items.length === 0) {
+      grid.innerHTML = '<div class="gallery-empty">Em breve, novas peças por aqui.</div>';
+      return;
+    }
+
+    grid.innerHTML = items.map(item => `
+      <article class="gallery-item">
+        <div class="gallery-thumb">
+          <img src="${item.img}" alt="${item.title}" loading="lazy">
+        </div>
+        <div class="gallery-info">
+          <h3>${item.title}</h3>
+          <div class="gallery-tags">
+            ${(item.tags || []).map(tag => `<span class="gallery-tag">${tag}</span>`).join("")}
+          </div>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  renderGallery(galleryItems);
+</script>
+</body>
+</html>
