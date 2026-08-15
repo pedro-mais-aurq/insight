@@ -1,0 +1,36 @@
+export const ANALYSIS_ERROR_CODES = Object.freeze({
+  PARSE_FAILED: "PARSE_FAILED",
+  NO_GEOMETRY: "NO_GEOMETRY",
+  NO_TRIANGLES: "NO_TRIANGLES",
+  UNSUPPORTED_STRUCTURE: "UNSUPPORTED_STRUCTURE",
+  INVALID_COORDINATES: "INVALID_COORDINATES",
+  ANALYSIS_WORKER_FAILED: "ANALYSIS_WORKER_FAILED",
+  ANALYSIS_START_FAILED: "ANALYSIS_START_FAILED",
+  ANALYSIS_SAVE_FAILED: "ANALYSIS_SAVE_FAILED",
+  RATE_LIMITED: "RATE_LIMITED",
+  UPLOAD_EXPIRED: "UPLOAD_EXPIRED",
+  UPLOAD_STATE_INVALID: "UPLOAD_STATE_INVALID"
+});
+
+export const ANALYSIS_WARNING_CODES = Object.freeze({
+  UNIT_UNKNOWN: "UNIT_UNKNOWN",
+  DEGENERATE_TRIANGLES: "DEGENERATE_TRIANGLES",
+  OPEN_EDGES: "OPEN_EDGES",
+  NON_MANIFOLD_EDGES: "NON_MANIFOLD_EDGES",
+  MULTIPLE_COMPONENTS: "MULTIPLE_COMPONENTS",
+  TOPOLOGY_SKIPPED_COMPLEXITY: "TOPOLOGY_SKIPPED_COMPLEXITY",
+  VOLUME_UNRELIABLE: "VOLUME_UNRELIABLE"
+});
+
+export class AnalysisError extends Error {
+  constructor(code, options = {}) {
+    super(code, options);
+    this.name = "AnalysisError";
+    this.code = code;
+  }
+}
+
+export function normalizeAnalysisError(error, fallbackCode) {
+  const knownCodes = new Set(Object.values(ANALYSIS_ERROR_CODES));
+  return knownCodes.has(error?.code) ? error.code : fallbackCode;
+}

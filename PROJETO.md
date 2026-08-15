@@ -327,3 +327,7 @@ Com esse material, esta estrutura pode ser consolidada em:
 6. **design system Insight**
 7. **protótipo navegável**
 8. **versão de deploy**
+
+---
+
+> **Nota da P1:** a arquitetura executável da foundation de upload e análise está documentada em [`docs/ARCHITECTURE_P1.md`](docs/ARCHITECTURE_P1.md). Essa fase não implementa upload nem análise de modelos.

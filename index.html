@@ -72,12 +72,86 @@
     <p>Atendemos em todo o Brasil.</p>
   </div>
   <div class="print">
-    <div class="upload">
-      <div>
-        <div class="kicker">Arquivo 3D</div>
-        <h3>Solte seu<br>modelo aqui.</h3>
+    <div
+      class="upload"
+      id="upload-panel"
+      data-upload-root
+      data-upload-state="idle"
+    >
+      <div class="upload-summary">
+        <div class="kicker" data-upload-eyebrow>Arquivo 3D</div>
+        <h3 data-upload-title>Solte seu<br>modelo aqui.</h3>
+        <p
+          class="upload-file-meta"
+          id="upload-file-meta"
+          data-upload-file-meta
+          hidden
+        ></p>
       </div>
-      <div class="drop">Arraste STL, 3MF ou OBJ<br><small>ou selecione um arquivo</small></div>
+      <div
+        class="drop"
+        id="upload-dropzone"
+        data-upload-dropzone
+      >
+        <span data-upload-limits>Arraste STL, 3MF ou OBJ</span><br>
+        <button
+          class="upload-select"
+          type="button"
+          data-upload-select
+        >ou selecione um arquivo</button>
+      </div>
+      <input
+        class="upload-input"
+        id="upload-file"
+        type="file"
+        data-upload-input
+        aria-label="Selecionar arquivo 3D"
+        aria-describedby="upload-file-meta upload-status"
+        hidden
+      >
+      <p
+        class="upload-status"
+        id="upload-status"
+        data-upload-status
+        aria-live="polite"
+      ></p>
+      <div class="upload-actions" data-upload-actions hidden>
+        <button class="upload-action" type="button" data-upload-retry hidden>Tentar novamente</button>
+        <button class="upload-action" type="button" data-upload-replace>Substituir</button>
+        <button class="upload-action secondary" type="button" data-upload-remove>Remover</button>
+      </div>
+      <section class="analysis-panel" data-analysis-panel hidden>
+        <p class="analysis-stage" data-analysis-stage aria-live="polite"></p>
+        <p class="analysis-error" data-analysis-error hidden></p>
+        <button class="upload-action" type="button" data-analysis-retry hidden>Tentar analisar novamente</button>
+        <div class="model-viewer" data-model-viewer aria-label="Visualização 3D do modelo"></div>
+        <p class="viewer-unavailable" data-viewer-unavailable hidden>Preview 3D indisponível.</p>
+        <div class="analysis-result" data-analysis-result hidden>
+          <label class="analysis-unit-label">
+            Unidade do modelo
+            <select data-analysis-unit>
+              <option value="">Não definida</option>
+              <option value="mm">Milímetro (mm)</option>
+              <option value="cm">Centímetro (cm)</option>
+              <option value="m">Metro (m)</option>
+              <option value="inch">Polegada (inch)</option>
+            </select>
+          </label>
+          <div class="analysis-grid">
+            <div><span>Dimensões</span><strong data-analysis-dimensions>—</strong></div>
+            <div><span>Triângulos</span><strong data-analysis-triangles>—</strong></div>
+            <div><span>Meshes</span><strong data-analysis-meshes>—</strong></div>
+            <div><span>Vértices</span><strong data-analysis-vertices>—</strong></div>
+            <div><span>Área superficial</span><strong data-analysis-area>—</strong></div>
+            <div><span>Volume</span><strong data-analysis-volume>—</strong></div>
+            <div><span>Malha fechada</span><strong data-analysis-watertight>—</strong></div>
+            <div><span>Arestas abertas</span><strong data-analysis-open-edges>—</strong></div>
+            <div><span>Non-manifold</span><strong data-analysis-non-manifold>—</strong></div>
+            <div><span>Componentes</span><strong data-analysis-components>—</strong></div>
+          </div>
+          <p class="analysis-warnings" data-analysis-warnings hidden></p>
+        </div>
+      </section>
     </div>
     <div class="quote">
       <div class="kicker">Estimativa</div>
@@ -122,54 +196,6 @@
 </div>
 </footer>
 
-<script>
-  // Galeria de trabalhos já feitos.
-  // Para adicionar uma nova peça, basta acrescentar um novo objeto neste array —
-  // nenhuma alteração de HTML/CSS é necessária. Quando houver backend, este
-  // array pode ser substituído por um fetch() que retorna a mesma estrutura.
-  const galleryItems = [
-    {
-      title: "Invincible",
-      img: "assets/image/gallery/invincible.jpeg",
-      tags: ["Estátua colecionável", "Multicolor"]
-    },
-    {
-      title: "Miolo de roda Ford",
-      img: "assets/image/gallery/ford-miolo-roda.png",
-      tags: ["PETG", "Automotivo"]
-    },
-    {
-      title: "Cthulhu",
-      img: "assets/image/gallery/cthulhu.png",
-      tags: ["Resina", "Miniatura"]
-    }
-  ];
-
-  function renderGallery(items) {
-    const grid = document.getElementById("gallery-grid");
-    if (!grid) return;
-
-    if (!items || items.length === 0) {
-      grid.innerHTML = '<div class="gallery-empty">Em breve, novas peças por aqui.</div>';
-      return;
-    }
-
-    grid.innerHTML = items.map(item => `
-      <article class="gallery-item">
-        <div class="gallery-thumb">
-          <img src="${item.img}" alt="${item.title}" loading="lazy">
-        </div>
-        <div class="gallery-info">
-          <h3>${item.title}</h3>
-          <div class="gallery-tags">
-            ${(item.tags || []).map(tag => `<span class="gallery-tag">${tag}</span>`).join("")}
-          </div>
-        </div>
-      </article>
-    `).join("");
-  }
-
-  renderGallery(galleryItems);
-</script>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>

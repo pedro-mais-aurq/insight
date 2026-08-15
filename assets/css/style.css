@@ -42,7 +42,8 @@ header {
 }
 
 .nav {
-    height: 82px;
+    height: 72px;
+    padding: 8px 0;
     border-bottom: 1px solid var(--line);
     display: flex;
     align-items: center;
@@ -327,7 +328,8 @@ h1 {
     min-height: 330px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between
+    justify-content: space-between;
+    gap: 20px
 }
 
 .upload h3 {
@@ -335,7 +337,8 @@ h1 {
     font-size: 52px;
     line-height: .9;
     text-transform: uppercase;
-    margin: 0
+    margin: 0;
+    overflow-wrap: anywhere
 }
 
 .drop {
@@ -343,7 +346,183 @@ h1 {
     border-radius: 14px;
     padding: 28px;
     text-align: center;
-    color: #bbb
+    color: #bbb;
+    transition: border-color .2s ease, background-color .2s ease, color .2s ease
+}
+
+.upload[data-drag-active="true"] .drop {
+    border-color: var(--white);
+    background: #171717;
+    color: var(--white)
+}
+
+.upload [hidden] {
+    display: none
+}
+
+.upload-input {
+    display: none
+}
+
+.upload-select {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: .82em;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer
+}
+
+.upload-select:focus-visible,
+.upload-action:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 4px
+}
+
+.upload-file-meta,
+.upload-status {
+    margin: 12px 0 0;
+    color: #bbb;
+    line-height: 1.5
+}
+
+.upload-file-meta {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase
+}
+
+.upload-status {
+    min-height: 24px;
+    font-size: 13px
+}
+
+.upload[data-upload-state="invalid"] .upload-status,
+.upload[data-upload-state="upload_error"] .upload-status {
+    color: var(--white)
+}
+
+.upload-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px
+}
+
+.upload-action {
+    appearance: none;
+    border: 1px solid var(--white);
+    border-radius: 10px;
+    padding: 11px 15px;
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer
+}
+
+.upload-action.secondary {
+    background: transparent;
+    color: var(--white)
+}
+
+.upload-select:disabled,
+.upload-action:disabled {
+    cursor: not-allowed;
+    opacity: .55
+}
+
+.analysis-panel {
+    display: grid;
+    gap: 16px
+}
+
+.analysis-stage,
+.analysis-error,
+.analysis-warnings,
+.viewer-unavailable {
+    margin: 0;
+    color: #bbb;
+    font-size: 13px;
+    line-height: 1.5
+}
+
+.model-viewer {
+    width: 100%;
+    min-height: 300px;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 1px solid #333;
+    border-radius: 14px;
+    background: var(--black)
+}
+
+.model-viewer canvas {
+    display: block;
+    width: 100%;
+    height: 100%
+}
+
+.analysis-result {
+    display: grid;
+    gap: 16px
+}
+
+.analysis-unit-label {
+    display: grid;
+    gap: 8px;
+    color: #bbb;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase
+}
+
+.analysis-unit-label select {
+    width: 100%;
+    border: 1px solid #555;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #171717;
+    color: var(--white);
+    font: inherit
+}
+
+.analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    border: 1px solid #333;
+    border-radius: 12px;
+    background: #333
+}
+
+.analysis-grid div {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+    padding: 12px;
+    background: #111
+}
+
+.analysis-grid span {
+    color: #888;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase
+}
+
+.analysis-grid strong {
+    overflow-wrap: anywhere;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 18px
 }
 
 .quote {
@@ -398,6 +577,31 @@ footer small {
 }
 
 @media(max-width:800px) {
+    .nav {
+        height: 68px
+    }
+
+    .nav .logo {
+        height: 46px
+    }
+
+    .nav .btn {
+        padding: 12px 16px
+    }
+
+    .upload {
+        padding: 28px
+    }
+
+    .upload-actions {
+        align-items: stretch;
+        flex-direction: column
+    }
+
+    .analysis-grid {
+        grid-template-columns: 1fr
+    }
+
     .navlinks {
         display: none
     }

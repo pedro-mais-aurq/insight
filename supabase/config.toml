@@ -1,0 +1,27 @@
+project_id = "insight-main"
+
+[storage]
+enabled = true
+file_size_limit = "50MB"
+
+[storage.buckets.model-uploads]
+public = false
+file_size_limit = "50MB"
+
+[functions.create-model-upload]
+verify_jwt = false
+
+[functions.complete-model-upload]
+verify_jwt = false
+
+[functions.remove-model-upload]
+verify_jwt = false
+
+[functions.start-model-analysis]
+verify_jwt = false
+
+[functions.save-model-analysis]
+verify_jwt = false
+
+[functions.cleanup-model-uploads]
+verify_jwt = false
