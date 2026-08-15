@@ -1,5 +1,6 @@
 // Galeria de trabalhos já feitos.
 // Para adicionar uma nova peça, acrescente um objeto com a mesma estrutura.
+const baseUrl = import.meta.env.BASE_URL;
 export const galleryItems = Object.freeze([
   Object.freeze({
     title: "Invincible",
