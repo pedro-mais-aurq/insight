@@ -3,7 +3,7 @@
 export const galleryItems = Object.freeze([
   Object.freeze({
     title: "Invincible",
-    img: "assets/image/gallery/invincible.jpeg",
+    img: "./assets/image/gallery/invincible.jpeg",
     tags: Object.freeze(["Estátua colecionável", "Multicolor"])
   }),
   Object.freeze({
