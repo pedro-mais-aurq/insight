@@ -2,7 +2,8 @@ import { corsHeaders as supabaseCorsHeaders } from "npm:@supabase/supabase-js@2.
 
 const LOCAL_DEVELOPMENT_ORIGINS = Object.freeze([
   "http://localhost:5173",
-  "http://127.0.0.1:5173"
+  "http://127.0.0.1:5173",
+  "https://pedro-mais-aurq.github.io"
 ]);
 
 const BASE_CORS_HEADERS = Object.freeze({
