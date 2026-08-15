@@ -8,12 +8,12 @@ export const galleryItems = Object.freeze([
   }),
   Object.freeze({
     title: "Miolo de roda Ford",
-    img: "assets/image/gallery/ford-miolo-roda.png",
+    img: `${baseUrl}assets/image/gallery/ford-miolo-roda.png`,
     tags: Object.freeze(["PETG", "Automotivo"])
   }),
   Object.freeze({
     title: "Cthulhu",
-    img: "assets/image/gallery/cthulhu.png",
+    img: `${baseUrl}assets/image/gallery/cthulhu.png`,
     tags: Object.freeze(["Resina", "Miniatura"])
   })
 ]);
