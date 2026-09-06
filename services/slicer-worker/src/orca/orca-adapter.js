@@ -427,7 +427,7 @@ async function readFirstGcode(
   return readArchiveMember(
     archive,
     candidates[0],
-    run
+    runs
   );
 }
 
