@@ -15,34 +15,74 @@ export function runProcess(command, args, {
       cwd,
       env,
       shell: false,
-      stdio: ["ignore", "pipe", "pipe"]
+      stdio: ["ignore", "pipe", "pipe"],
+
+      // Linux/container:
+      // cria um process group próprio para podermos matar
+      // xvfb-run + Xvfb + AppRun + Orca juntos.
+      detached: process.platform !== "win32"
     });
+
     let stdout = "";
     let stderr = "";
     let outputBytes = 0;
     let timedOut = false;
+
     const timer = setTimeout(() => {
       timedOut = true;
-      child.kill("SIGKILL");
+
+      try {
+        if (
+          process.platform !== "win32"
+          && Number.isInteger(child.pid)
+        ) {
+          process.kill(-child.pid, "SIGKILL");
+        } else {
+          child.kill("SIGKILL");
+        }
+      } catch {
+        try {
+          child.kill("SIGKILL");
+        } catch {
+          // processo já encerrou
+        }
+      }
     }, timeoutMs);
 
     const collect = (target) => (chunk) => {
       outputBytes += chunk.byteLength;
+
       if (outputBytes <= maxOutputBytes) {
-        if (target === "stdout") stdout += chunk.toString("utf8");
-        else stderr += chunk.toString("utf8");
+        if (target === "stdout") {
+          stdout += chunk.toString("utf8");
+        } else {
+          stderr += chunk.toString("utf8");
+        }
       }
     };
+
     child.stdout.on("data", collect("stdout"));
     child.stderr.on("data", collect("stderr"));
+
     child.once("error", (error) => {
       clearTimeout(timer);
       reject(error);
     });
+
     child.once("close", (code, signal) => {
       clearTimeout(timer);
-      if (timedOut) return reject(new Error("SLICER_TIMEOUT"));
-      resolve({ code, signal, stdout, stderr, outputTruncated: outputBytes > maxOutputBytes });
+
+      if (timedOut) {
+        return reject(new Error("SLICER_TIMEOUT"));
+      }
+
+      resolve({
+        code,
+        signal,
+        stdout,
+        stderr,
+        outputTruncated: outputBytes > maxOutputBytes
+      });
     });
   });
 }

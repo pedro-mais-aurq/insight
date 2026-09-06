@@ -156,17 +156,33 @@ async function executeJob({
     }));
     return result;
   } catch (error) {
-    console.error(JSON.stringify({
-      event: "slice_failed",
-      jobId: job.jobId,
-      estimateId: job.jobId,
-      uploadId: job.uploadId,
-      engineVersion: profile.manifest.engineVersion,
-      profileVersion: job.profileVersion,
-      durationMs: Date.now() - startedAt,
-      exitCode: error?.details?.code ?? null,
-      errorCode: publicErrorCode(error)
-    }));
+ console.error(JSON.stringify({
+  event: "slice_failed",
+  jobId: job.jobId,
+  estimateId: job.jobId,
+  uploadId: job.uploadId,
+  engineVersion: profile.manifest.engineVersion,
+  profileVersion: job.profileVersion,
+  durationMs: Date.now() - startedAt,
+
+  exitCode:
+    error?.details?.code ?? null,
+
+  signal:
+    error?.details?.signal ?? null,
+
+  errorCode:
+    publicErrorCode(error),
+
+  stdoutTail:
+    error?.details?.stdoutTail ?? null,
+
+  stderrTail:
+    error?.details?.stderrTail ?? null,
+
+  outputTruncated:
+    error?.details?.outputTruncated ?? null
+}));
     throw error;
   } finally {
     await rm(workDir, { recursive: true, force: true });

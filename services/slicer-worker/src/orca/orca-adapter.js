@@ -97,9 +97,12 @@ export class OrcaSlicerAdapter {
           extension
         })
       );
+
+      error.details =
+        safeFailureDetails(execution);
+
       throw error;
     }
-
     let archive;
     try {
       archive = await findOutputArchive(outputDir, requestedOutput);
