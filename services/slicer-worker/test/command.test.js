@@ -18,8 +18,16 @@ test("constrói argv sem shell, sem orient e com perfis fechados", () => {
   assert.equal(invocation.command, "xvfb-run");
   assert.ok(invocation.args.includes(maliciousPath));
   assert.equal(invocation.args.includes("--orient"), false);
-  assert.deepEqual(invocation.args.slice(-2), ["--scale", "25.4"]);
-  assert.equal(invocation.args.filter((item) => item === "--load-settings").length, 2);
+  assert.equal(
+    invocation.args.includes("--scale"),
+    false
+  );
+  assert.equal(
+    invocation.args.filter(
+      (item) => item === "--load-settings"
+    ).length,
+    2
+  );
 });
 
 test("3MF preserva a orientação e não recebe escala duplicada", () => {
@@ -44,7 +52,9 @@ test("paths hostis permanecem argumentos literais e não viram flags", () => {
       profileFiles
     });
     assert.equal(invocation.command, "xvfb-run");
-    assert.equal(invocation.args[3], inputPath);
+    assert.ok(
+      invocation.args.includes(inputPath)
+    );
     assert.equal(invocation.args.includes("--orient"), false);
   }
 });

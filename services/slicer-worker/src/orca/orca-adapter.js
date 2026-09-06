@@ -4,6 +4,7 @@ import { buildOrcaCommand } from "./command.js";
 import { canonicalize3mf } from "./canonicalize-3mf.js";
 import { runProcess } from "./process.js";
 import { parseSliceResult } from "./result-parser.js";
+import { normalizeModelUnits } from "./normalize-model.js";
 
 export class OrcaSlicerAdapter {
   constructor({
@@ -23,20 +24,47 @@ export class OrcaSlicerAdapter {
   async slice({ inputPath, extension, sourceUnit, unitScale, profile, workDir }) {
     const outputDir = path.join(workDir, "output");
     const runtimeHome = path.join(workDir, "runtime-home");
+    const runtimeDir = path.join(runtimeHome, ".runtime");
+
     await mkdir(outputDir, { recursive: true });
     await mkdir(path.join(runtimeHome, ".config"), { recursive: true });
     await mkdir(path.join(runtimeHome, ".cache"), { recursive: true });
+    await mkdir(runtimeDir, {
+      recursive: true,
+      mode: 0o700
+    });
     let slicerInput = inputPath;
 
     if (extension === "3mf") {
-      const canonicalDir = path.join(workDir, "canonical-source");
-      await mkdir(canonicalDir, { recursive: true });
-      slicerInput = path.join(workDir, "geometry-only.3mf");
+      const canonicalDir =
+        path.join(workDir, "canonical-source");
+
+      await mkdir(
+        canonicalDir,
+        { recursive: true }
+      );
+
+      slicerInput =
+        path.join(workDir, "geometry-only.3mf");
+
       await canonicalize3mf({
         inputPath,
         outputPath: slicerInput,
         stagingDir: canonicalDir,
         sourceUnit
+      });
+    } else if (unitScale !== 1) {
+      slicerInput =
+        path.join(
+          workDir,
+          `normalized-input.${extension}`
+        );
+
+      await normalizeModelUnits({
+        inputPath,
+        outputPath: slicerInput,
+        extension,
+        unitScale
       });
     }
 
@@ -58,13 +86,17 @@ export class OrcaSlicerAdapter {
         HOME: runtimeHome,
         XDG_CONFIG_HOME: path.join(runtimeHome, ".config"),
         XDG_CACHE_HOME: path.join(runtimeHome, ".cache"),
+        XDG_RUNTIME_DIR: runtimeDir,
         TMPDIR: workDir
       }
     });
 
     if (execution.code !== 0) {
-      const error = new Error(classifyExecutionFailure(execution));
-      error.details = safeFailureDetails(execution);
+      const error = new Error(
+        classifyExecutionFailure(execution, {
+          extension
+        })
+      );
       throw error;
     }
 
@@ -116,21 +148,65 @@ function safeFailureDetails(execution) {
   return {
     code: execution.code,
     signal: execution.signal,
-    stderrTail: execution.stderr.slice(-2000),
+    stdoutTail: execution.stdout.slice(-4000),
+    stderrTail: execution.stderr.slice(-4000),
     outputTruncated: execution.outputTruncated
   };
 }
 
-export function classifyExecutionFailure(execution) {
-  const output = `${execution?.stdout ?? ""}\n${execution?.stderr ?? ""}`;
-  if (/outside.{0,40}(build|print)|does not fit|exceed.{0,40}(build|plate)|too large for.{0,40}(plate|bed)/i.test(output)) {
+export function classifyExecutionFailure(
+  execution,
+  { extension } = {}
+) {
+  const output =
+    `${execution?.stdout ?? ""}\n` +
+    `${execution?.stderr ?? ""}`;
+
+  /*
+   * Orca CLI_NO_SUITABLE_OBJECTS = -50.
+   *
+   * Em Unix o exit code aparece como:
+   *   256 - 50 = 206
+   *
+   * Para OBJ/STL processamos um único modelo;
+   * portanto -50 aqui significa que não existe
+   * objeto imprimível completamente dentro da cama.
+   *
+   * Não fazemos esse mapeamento automaticamente
+   * para 3MF porque -50 também pode representar
+   * uma plate vazia nesse formato.
+   */
+  const noSuitableObjects =
+    /\breturn\s+-50\b/i.test(output) ||
+    execution?.code === 206;
+
+  if (
+    extension !== "3mf" &&
+    noSuitableObjects
+  ) {
     return "MODEL_OUTSIDE_BUILD_VOLUME";
   }
-  if (/too many (triangles|facets)|model.{0,30}too complex|out of memory|bad_alloc/i.test(output)) {
+
+  if (
+    /outside.{0,40}(build|print)|does not fit|exceed.{0,40}(build|plate)|too large for.{0,40}(plate|bed)/i
+      .test(output)
+  ) {
+    return "MODEL_OUTSIDE_BUILD_VOLUME";
+  }
+
+  if (
+    /too many (triangles|facets)|model.{0,30}too complex|out of memory|bad_alloc/i
+      .test(output)
+  ) {
     return "MODEL_TOO_COMPLEX";
   }
-  if (/(invalid|failed).{0,30}(preset|profile)|load.{0,30}(preset|profile).{0,30}failed/i.test(output)) {
+
+  if (
+    /(invalid|failed).{0,30}(preset|profile)|load.{0,30}(preset|profile).{0,30}failed/i
+      .test(output)
+  ) {
     return "SLICER_PROFILE_INVALID";
   }
+
   return "SLICER_UNAVAILABLE";
 }
