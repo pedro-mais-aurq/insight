@@ -3,7 +3,10 @@ export const RATE_LIMIT_POLICIES = Object.freeze({
   "complete-model-upload": Object.freeze({ limit: 30, windowSeconds: 600 }),
   "remove-model-upload": Object.freeze({ limit: 30, windowSeconds: 600 }),
   "start-model-analysis": Object.freeze({ limit: 20, windowSeconds: 600 }),
-  "save-model-analysis": Object.freeze({ limit: 20, windowSeconds: 600 })
+  "save-model-analysis": Object.freeze({ limit: 20, windowSeconds: 600 }),
+  "estimate-model-price": Object.freeze({ limit: 30, windowSeconds: 600 }),
+  "start-manufacturing-estimate": Object.freeze({ limit: 10, windowSeconds: 600 }),
+  "get-manufacturing-estimate": Object.freeze({ limit: 120, windowSeconds: 600 })
 });
 
 export type RateLimitScope = keyof typeof RATE_LIMIT_POLICIES;

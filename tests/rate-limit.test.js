@@ -11,7 +11,10 @@ describe("rate limit", () => {
       "complete-model-upload": { limit: 30, windowSeconds: 600 },
       "remove-model-upload": { limit: 30, windowSeconds: 600 },
       "start-model-analysis": { limit: 20, windowSeconds: 600 },
-      "save-model-analysis": { limit: 20, windowSeconds: 600 }
+      "save-model-analysis": { limit: 20, windowSeconds: 600 },
+      "estimate-model-price": { limit: 30, windowSeconds: 600 },
+      "start-manufacturing-estimate": { limit: 10, windowSeconds: 600 },
+      "get-manufacturing-estimate": { limit: 120, windowSeconds: 600 }
     });
   });
 

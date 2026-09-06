@@ -153,13 +153,34 @@
         </div>
       </section>
     </div>
-    <div class="quote">
+    <div
+      class="quote"
+      data-manufacturing-root
+      data-manufacturing-state="unavailable"
+      data-pricing-root
+      data-pricing-state="unavailable"
+    >
       <div class="kicker">Estimativa</div>
       <div class="quote-row"><span>Material</span><strong>PLA</strong></div>
       <div class="quote-row"><span>Qualidade</span><strong>0,20 mm</strong></div>
-      <div class="quote-row"><span>Quantidade</span><strong>1 peça</strong></div>
-      <div class="quote-row"><span>Prazo estimado</span><strong>3–5 dias</strong></div>
-      <div style="margin-top:25px"><div class="kicker">A partir de</div><div class="price">R$ 00,00</div></div>
+      <div class="quote-row"><span>Perfil</span><strong data-manufacturing-profile>A1 mini · PLA · 0,20 mm</strong></div>
+      <div class="quote-row"><span>Orientação</span><strong>Atual do arquivo</strong></div>
+      <label class="quote-row quote-quantity">
+        <span>Quantidade</span>
+        <input data-manufacturing-quantity type="number" min="1" max="1000" step="1" value="1" inputmode="numeric">
+      </label>
+      <div class="quote-row"><span>Filamento</span><strong data-manufacturing-weight>—</strong></div>
+      <div class="quote-row"><span>Prazo estimado</span><strong data-manufacturing-time>Após análise</strong></div>
+      <div class="manufacturing-result">
+        <div class="kicker">Estimativa técnica</div>
+        <p class="manufacturing-status" data-manufacturing-status aria-live="polite"></p>
+        <button class="manufacturing-retry" type="button" data-manufacturing-retry hidden>Tentar novamente</button>
+      </div>
+      <div class="pricing-result">
+        <div class="kicker">Estimativa comercial</div>
+        <p class="pricing-status" data-pricing-status aria-live="polite"></p>
+        <div class="price" data-pricing-price hidden></div>
+      </div>
       <a class="btn dark" style="margin-top:24px;width:100%" href="#pedido">Solicitar impressão</a>
     </div>
   </div>

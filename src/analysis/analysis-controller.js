@@ -18,6 +18,7 @@ export function createAnalysisController({
   workerClient,
   viewer,
   view,
+  manufacturingHooks = {},
   parser = parseModel,
   normalizer = normalizeGeometry,
   now = () => new Date().toISOString(),
@@ -76,6 +77,7 @@ export function createAnalysisController({
         viewer.dispose();
         view.setViewerUnavailable(true);
       }
+      manufacturingHooks.onReady?.(stateController.getState());
     } catch (error) {
       const code = normalizeAnalysisError(
         error,
@@ -127,12 +129,14 @@ export function createAnalysisController({
     } catch {
       // A análise continua válida localmente; uma nova análise permite persistir novamente.
     }
+    manufacturingHooks.onReady?.(stateController.getState());
   }
 
   function reset() {
     workerClient.dispose();
     viewer.dispose();
     view.setViewerUnavailable(false);
+    manufacturingHooks.onReset?.();
   }
 
   view.bind({ onRetry: retry, onUnitChange: changeUnit });

@@ -1,5 +1,8 @@
 project_id = "insight-main"
 
+[edge_runtime]
+policy = "per_worker"
+
 [storage]
 enabled = true
 file_size_limit = "50MB"
@@ -21,6 +24,15 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.save-model-analysis]
+verify_jwt = false
+
+[functions.estimate-model-price]
+verify_jwt = false
+
+[functions.start-manufacturing-estimate]
+verify_jwt = false
+
+[functions.get-manufacturing-estimate]
 verify_jwt = false
 
 [functions.cleanup-model-uploads]

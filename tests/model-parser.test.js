@@ -51,6 +51,7 @@ describe("parseModel", () => {
 
       expect(result.format).toBe("3mf");
       expect(result.meshCount).toBe(1);
+      expect(result.unit).toEqual({ value: "mm", source: "file", confirmed: true });
       expect(result.object3D.children[0].children[0].geometry
         .getAttribute("position").count).toBe(3);
     } finally {
