@@ -34,6 +34,10 @@ export function buildModelAnalysis({
 }
 
 export function applyUserUnit(analysis, unitValue) {
+  if (analysis?.unit?.source === "file") {
+    return analysis;
+  }
+
   const unit = createUserUnit(unitValue);
 
   return {

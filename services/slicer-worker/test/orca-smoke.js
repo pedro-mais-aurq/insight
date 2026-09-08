@@ -10,66 +10,40 @@ const root = await mkdtemp(path.join(process.env.WORK_ROOT ?? os.tmpdir(), "orca
 try {
   const profile = await loadProfile(
     process.env.PROFILE_ROOT ?? "/app/profiles",
-    process.env.PROFILE_KEY ?? "insight-a1m-pla-020-v1"
+    process.env.PROFILE_KEY ?? "insight-estimation-a1m-pla-020-v1"
   );
   const adapter = new OrcaSlicerAdapter({
     orcaBinary: process.env.ORCA_SLICER_BIN ?? "/opt/orca/AppRun",
-    timeoutMs: 90_000
+    timeoutMs: Number(process.env.SLICER_TIMEOUT_MS ?? 105_000)
   });
 
   const first = await runFixture("cube-first", "cube.stl", "stl", "mm", 1);
   const second = await runFixture("cube-second", "cube.stl", "stl", "mm", 1);
   assert.deepEqual(metrics(second), metrics(first), "repeated real slices must be deterministic");
   assert.match(profile.manifest.profileFingerprint, /^[0-9a-f]{64}$/);
-const unitResults = [];
 
-for (const [name, sourceUnit, unitScale] of [
-  ["cube-mm", "mm", 1],
-  ["cube-cm", "cm", 10],
-  ["cube-m", "m", 1000],
-  ["cube-inch", "inch", 25.4]
-]) {
-  process.stdout.write(
-    `[SMOKE_UNIT] ${name} sourceUnit=${sourceUnit} unitScale=${unitScale}\n`
-  );
-
-  const workDir = path.join(root, name);
-  await mkdir(workDir);
-
-  const inputPath = path.join(workDir, "cube.obj");
-  await writeFile(
-    inputPath,
-    cubeObj(20 / unitScale)
-  );
-
-  unitResults.push(
-    await slice({
-      inputPath,
-      extension: "obj",
-      sourceUnit,
-      unitScale,
-      workDir
-    })
-  );
-}
-
-for (const result of unitResults.slice(1)) {
-  assert.ok(
-    Math.abs(
-      result.weightGrams -
-      unitResults[0].weightGrams
-    ) <= 0.01
-  );
-
-  assert.ok(
-    Math.abs(
-      result.printTimeSeconds -
-      unitResults[0].printTimeSeconds
-    ) <= 2
-  );
-}
+  const unitResults = [];
+  for (const [name, sourceUnit, unitScale] of [
+    ["cube-mm", "mm", 1],
+    ["cube-cm", "cm", 10],
+    ["cube-m", "m", 1000],
+    ["cube-inch", "inch", 25.4]
+  ]) {
+    const workDir = path.join(root, name);
+    await mkdir(workDir);
+    const inputPath = path.join(workDir, "cube.obj");
+    await writeFile(inputPath, cubeObj(20 / unitScale));
+    process.stdout.write(`[SMOKE_UNIT] ${name} sourceUnit=${sourceUnit} unitScale=${unitScale}\n`);
+    unitResults.push(await slice({ inputPath, extension: "obj", sourceUnit, unitScale, workDir }));
+  }
+  for (const result of unitResults.slice(1)) {
+    assert.ok(Math.abs(result.weightGrams - unitResults[0].weightGrams) <= 0.01);
+    assert.ok(Math.abs(result.printTimeSeconds - unitResults[0].printTimeSeconds) <= 2);
+  }
 
   await runFixture("overhang", "overhang.obj", "obj", "mm", 1);
+  const commercialLarge = await runFixture("commercial-large", "outside-build-volume.obj", "obj", "mm", 1);
+  assert.ok(commercialLarge.weightGrams > 0, "model above the real 180 mm bed must reach real slicing");
 
   const first3mf = await createThreeMf("three-a", "0.08", "100%");
   const second3mf = await createThreeMf("three-b", "0.28", "5%");
@@ -90,7 +64,7 @@ for (const result of unitResults.slice(1)) {
   assert.deepEqual(metrics(second3mfResult), metrics(first3mfResult), "embedded 3MF settings must not affect estimates");
 
   await assert.rejects(
-    () => runFixture("outside", "outside-build-volume.obj", "obj", "mm", 1),
+    () => runFixture("outside", "outside-virtual-volume.obj", "obj", "mm", 1),
     /MODEL_OUTSIDE_BUILD_VOLUME/
   );
 
@@ -112,8 +86,8 @@ for (const result of unitResults.slice(1)) {
 
   async function slice({ inputPath, extension, sourceUnit, unitScale, workDir }) {
     const result = await adapter.slice({ inputPath, extension, sourceUnit, unitScale, profile, workDir });
-    assert.ok(result.weightGrams > 0 && result.weightGrams <= 10_000);
-    assert.ok(result.printTimeSeconds > 0 && result.printTimeSeconds <= 2_592_000);
+    assert.ok(result.weightGrams > 0 && result.weightGrams <= 100_000);
+    assert.ok(result.printTimeSeconds > 0 && result.printTimeSeconds <= 36_000_000);
     return result;
   }
 
@@ -141,18 +115,15 @@ function metrics(result) {
 }
 
 function cubeObj(size) {
-  const min = size;
-  const max = size * 2;
-
   return `o cube
-v ${min} ${min} 0
-v ${max} ${min} 0
-v ${max} ${max} 0
-v ${min} ${max} 0
-v ${min} ${min} ${size}
-v ${max} ${min} ${size}
-v ${max} ${max} ${size}
-v ${min} ${max} ${size}
+v 0 0 0
+v ${size} 0 0
+v ${size} ${size} 0
+v 0 ${size} 0
+v 0 0 ${size}
+v ${size} 0 ${size}
+v ${size} ${size} ${size}
+v 0 ${size} ${size}
 f 1 4 3 2
 f 5 6 7 8
 f 1 2 6 5

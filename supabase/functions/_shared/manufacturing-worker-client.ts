@@ -1,6 +1,7 @@
 import {
   MANUFACTURING_ENGINE,
   MANUFACTURING_ENGINE_VERSION,
+  MANUFACTURING_RESULT_LIMITS,
   safeManufacturingError
 } from "./manufacturing-contract.ts";
 
@@ -120,10 +121,10 @@ function assertWorkerResult(payload: Record<string, unknown>, input: { jobId: st
     || typeof payload.weightGrams !== "number"
     || !Number.isFinite(payload.weightGrams)
     || payload.weightGrams <= 0
-    || payload.weightGrams > 10_000
+    || payload.weightGrams > MANUFACTURING_RESULT_LIMITS.maxWeightGrams
     || !Number.isSafeInteger(payload.printTimeSeconds)
     || payload.printTimeSeconds <= 0
-    || payload.printTimeSeconds > 2_592_000
+    || payload.printTimeSeconds > MANUFACTURING_RESULT_LIMITS.maxPrintTimeSeconds
     || !(payload.supportUsed === null || typeof payload.supportUsed === "boolean")
     || !Array.isArray(payload.warnings)
     || payload.warnings.some((warning) => typeof warning !== "string" || warning.length > 200)

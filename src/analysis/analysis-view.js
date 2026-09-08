@@ -69,7 +69,8 @@ export function createAnalysisView(root) {
       ? getAnalysisErrorMessage(state.error?.code)
       : "";
     elements.result.hidden = !isReady;
-    elements.unit.disabled = !isReady;
+    elements.unit.disabled = !isReady
+      || !isAnalysisUnitEditable(state.analysis?.result);
     elements.viewer.hidden = !isReady || viewerUnavailable;
     elements.viewerUnavailable.hidden = !isReady || !viewerUnavailable;
 
@@ -129,6 +130,10 @@ export function getAnalysisWarningMessage(code) {
 export function shouldShowAnalysisRetry(state) {
   return state.status === UPLOAD_STATES.ANALYSIS_ERROR
     && state.error?.retryable === true;
+}
+
+export function isAnalysisUnitEditable(analysis) {
+  return Boolean(analysis) && analysis.unit?.source !== "file";
 }
 
 function renderResult(elements, analysis) {

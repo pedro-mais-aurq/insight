@@ -15,9 +15,19 @@ describe("manufacturing client", () => {
         profile: { label: "A1 mini" }
       }, error: null });
     const client = createManufacturingClient({ getClient: () => ({ functions: { invoke } }) });
-    expect(await client.startEstimate({ uploadId: estimateId, profileKey: "insight-a1m-pla-020-v1", unit: "mm" }))
+    expect(await client.startEstimate({ uploadId: estimateId, profileKey: "insight-estimation-a1m-pla-020-v1" }))
       .toMatchObject({ estimateId, estimateStatus: "processing" });
     expect(await client.getEstimate(estimateId)).toMatchObject({ weightGrams: 63.51, printTimeSeconds: 4571 });
+  });
+
+  it("aceita falha terminal já concluída pelo preflight do backend", async () => {
+    const client = createManufacturingClient({
+      getClient: () => ({ functions: { invoke: vi.fn().mockResolvedValue({
+        data: { estimateId, estimateStatus: "failed", pollAfterMs: 1500 },
+        error: null
+      }) } })
+    });
+    await expect(client.startEstimate({ uploadId: estimateId })).resolves.toMatchObject({ estimateStatus: "failed" });
   });
 
   it("rejeita JSON de sucesso incompleto", async () => {

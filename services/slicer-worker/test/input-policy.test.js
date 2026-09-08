@@ -9,7 +9,7 @@ const base = {
   extension: "stl",
   sourceUnit: "mm",
   unitScale: 1,
-  profileKey: "insight-a1m-pla-020-v1",
+  profileKey: "insight-estimation-a1m-pla-020-v1",
   profileVersion: 1,
   expectedProfileFingerprint: "a".repeat(64)
 };

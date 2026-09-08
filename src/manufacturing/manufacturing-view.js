@@ -1,22 +1,4 @@
-const ERROR_MESSAGES = Object.freeze({
-  UPLOAD_EXPIRED: "O arquivo expirou. Envie-o novamente.",
-  MANUFACTURING_PROFILE_UNAVAILABLE: "O perfil de fabricação está temporariamente indisponível.",
-  MODEL_UNIT_REQUIRED: "Confirme a unidade física para continuar.",
-  MODEL_UNIT_INVALID: "A unidade informada não corresponde ao modelo.",
-  MODEL_NOT_SLICEABLE: "O modelo não pôde ser preparado com segurança para fabricação.",
-  MODEL_OUTSIDE_BUILD_VOLUME: "O modelo não cabe no volume de impressão da A1 mini.",
-  MODEL_TOO_COMPLEX: "O modelo é complexo demais para o limite operacional atual.",
-  SLICER_PROFILE_INVALID: "O perfil técnico do slicer é inválido.",
-  SLICER_PROFILE_MISMATCH: "O perfil técnico do worker não corresponde ao perfil aprovado.",
-  SLICER_OUTPUT_INVALID: "O slicer não produziu peso e tempo confiáveis.",
-  SLICER_UNAVAILABLE: "O serviço de fabricação está temporariamente indisponível.",
-  SLICER_TIMEOUT: "O cálculo excedeu o tempo operacional. Tente novamente.",
-  SLICER_DOWNLOAD_FAILED: "O worker não conseguiu acessar o arquivo temporário.",
-  MANUFACTURING_START_FAILED: "Não foi possível iniciar a estimativa agora.",
-  MANUFACTURING_SAVE_FAILED: "A estimativa foi calculada, mas não pôde ser salva.",
-  WORKER_BUSY: "O serviço de fabricação está ocupado. Tente novamente em instantes.",
-  RATE_LIMITED: "Muitas estimativas foram solicitadas. Aguarde e tente novamente."
-});
+export const MANUFACTURING_FALLBACK_MESSAGE = "não conseguimos estipular os valores mínimos, favor consultar a insight no whatsapp";
 
 export function createManufacturingView(root) {
   const elements = getElements(root);
@@ -59,9 +41,9 @@ export function createManufacturingView(root) {
     elements.retry.hidden = true;
   }
 
-  function showError(code) {
+  function showError() {
     root.dataset.manufacturingState = "error";
-    elements.status.textContent = ERROR_MESSAGES[code] ?? "Não foi possível concluir a estimativa técnica agora.";
+    elements.status.textContent = MANUFACTURING_FALLBACK_MESSAGE;
     elements.retry.hidden = false;
   }
 

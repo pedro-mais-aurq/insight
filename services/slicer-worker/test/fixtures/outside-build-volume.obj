@@ -1,4 +1,5 @@
-# Insight-owned 200 x 200 x 20 mm fixture; A1 mini must not scale it to fit.
+# Insight-owned 200 x 200 x 20 mm fixture; larger than the real A1 mini bed but
+# intentionally valid for the finite commercial-estimation volume.
 o oversized_box
 v 0 0 0
 v 200 0 0

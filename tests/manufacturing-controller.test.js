@@ -33,8 +33,7 @@ describe("manufacturing controller", () => {
     await test.controller.onAnalysisReady(state);
     expect(test.service.startEstimate).toHaveBeenCalledWith({
       uploadId: state.id,
-      profileKey: "insight-a1m-pla-020-v1",
-      unit: "cm"
+      profileKey: "insight-estimation-a1m-pla-020-v1"
     });
     expect(test.view.showEstimate).toHaveBeenCalledWith(expect.objectContaining({ weightGrams: 50, printTimeSeconds: 5400 }));
     expect(test.pricingClient.estimatePrice).toHaveBeenCalledWith({ weightGrams: 50, printTimeHours: 1.5, quantity: 2 });

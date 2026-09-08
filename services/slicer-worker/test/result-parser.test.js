@@ -34,8 +34,18 @@ test("usa comentários de G-code como fallback", () => {
 
 test("rejeita resultados acima dos limites de sanidade", () => {
   assert.throws(() => parseSliceResult({
-    sliceInfoXml: `<config><plate><metadata key="prediction" value="3000000"/><metadata key="weight" value="2"/></plate></config>`
+    sliceInfoXml: `<config><plate><metadata key="prediction" value="36000001"/><metadata key="weight" value="2"/></plate></config>`
   }), /SLICER_OUTPUT_OUT_OF_RANGE/);
+});
+
+test("aceita faixa comercial ampliada compatível com o pricing engine", () => {
+  assert.deepEqual(parseSliceResult({ sliceInfoXml: `<config><plate><metadata key="prediction" value="3000000"/><metadata key="weight" value="50000"/></plate></config>` }), {
+    weightGrams: 50_000,
+    printTimeSeconds: 3_000_000,
+    source: "slice_info.config",
+    supportUsed: null,
+    warnings: []
+  });
 });
 
 test("rejeita output parcial, inválido, zero, negativo e não finito", () => {

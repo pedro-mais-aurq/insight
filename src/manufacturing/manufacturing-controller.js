@@ -1,4 +1,4 @@
-import { UNIT_FACTORS_TO_MM } from "../analysis/unit-converter.js";
+const SUPPORTED_UNITS = new Set(["mm", "cm", "m", "inch"]);
 
 export function createManufacturingController({
   service,
@@ -19,8 +19,7 @@ export function createManufacturingController({
     manufacturingEstimate = null;
     pricingView.showUnavailable();
     const unit = state?.analysis?.result?.unit;
-    const unitScale = UNIT_FACTORS_TO_MM[unit?.value];
-    if (!unit?.confirmed || !unitScale) {
+    if (!unit?.confirmed || !SUPPORTED_UNITS.has(unit?.value)) {
       view.showWaitingUnit();
       return;
     }
@@ -30,8 +29,7 @@ export function createManufacturingController({
     try {
       const started = await service.startEstimate({
         uploadId: state.id,
-        profileKey: "insight-a1m-pla-020-v1",
-        unit: unit.value
+        profileKey: "insight-estimation-a1m-pla-020-v1"
       });
       let estimate = await service.getEstimate(started.estimateId);
       for (let poll = 0; ["pending", "processing"].includes(estimate.estimateStatus); poll += 1) {

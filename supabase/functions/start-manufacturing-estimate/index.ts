@@ -12,8 +12,10 @@ import {
   MANUFACTURING_ENGINE_VERSION,
   MANUFACTURING_PROFILE_KEY,
   parseManufacturingInput,
+  resolveAuthoritativeManufacturingUnit,
   safeManufacturingError,
-  SIGNED_MODEL_URL_TTL_SECONDS
+  SIGNED_MODEL_URL_TTL_SECONDS,
+  exceedsEstimationBuildVolume
 } from "../_shared/manufacturing-contract.ts";
 import { requestSlice } from "../_shared/manufacturing-worker-client.ts";
 import { enforceRateLimit } from "../_shared/rate-limit.ts";
@@ -49,7 +51,11 @@ Deno.serve(async (request: Request) => {
     return errorResponse(request, "INVALID_MANUFACTURING_INPUT", 400);
   }
 
-  const [{ data: upload, error: uploadError }, { data: profile, error: profileError }] = await Promise.all([
+  const [
+    { data: upload, error: uploadError },
+    { data: profile, error: profileError },
+    { data: analysis, error: analysisError }
+  ] = await Promise.all([
     supabase
       .from("model_uploads")
       .select("id, extension, storage_bucket, storage_path, upload_status, uploaded_at")
@@ -58,7 +64,13 @@ Deno.serve(async (request: Request) => {
     supabase
       .from("manufacturing_profiles")
       .select("id, profile_key, version, slicer_engine, slicer_version, profile_fingerprint")
+      .eq("profile_key", input.profileKey)
       .eq("is_active", true)
+      .maybeSingle(),
+    supabase
+      .from("model_analyses")
+      .select("analysis_status, result")
+      .eq("model_upload_id", input.uploadId)
       .maybeSingle()
   ]);
 
@@ -85,14 +97,23 @@ Deno.serve(async (request: Request) => {
   ) {
     return errorResponse(request, "MANUFACTURING_PROFILE_UNAVAILABLE", 503);
   }
+  if (analysisError) return errorResponse(request, "MANUFACTURING_ESTIMATION_FAILED", 500);
+
+  let authoritativeUnit;
+  try {
+    authoritativeUnit = resolveAuthoritativeManufacturingUnit(analysis);
+  } catch (error) {
+    const code = safeManufacturingError((error as Error)?.message);
+    return errorResponse(request, code, code === "MODEL_UNIT_REQUIRED" ? 409 : 400);
+  }
 
   const cacheKey = await createManufacturingCacheKey({
     uploadId: input.uploadId,
     profileKey: profile.profile_key,
     profileVersion: profile.version,
     slicerVersion: profile.slicer_version,
-    sourceUnit: input.sourceUnit,
-    unitScale: input.unitScale
+    sourceUnit: authoritativeUnit.sourceUnit,
+    unitScale: authoritativeUnit.unitScale
   });
   const { data: claimedRows, error: claimError } = await supabase.rpc(
     "claim_manufacturing_estimate",
@@ -101,14 +122,39 @@ Deno.serve(async (request: Request) => {
       p_manufacturing_profile_id: profile.id,
       p_profile_version: profile.version,
       p_slicer_version: profile.slicer_version,
-      p_source_unit: input.sourceUnit,
-      p_unit_scale: input.unitScale,
+      p_source_unit: authoritativeUnit.sourceUnit,
+      p_unit_scale: authoritativeUnit.unitScale,
       p_cache_key: cacheKey
     }
   );
   const claimed = Array.isArray(claimedRows) ? claimedRows[0] : claimedRows;
   if (claimError || !claimed?.estimate_id) {
     return errorResponse(request, "MANUFACTURING_ESTIMATION_FAILED", 500);
+  }
+
+  if (claimed.should_dispatch && exceedsEstimationBuildVolume(authoritativeUnit.dimensionsMm)) {
+    await markFailed(supabase, claimed.estimate_id, "MODEL_OUTSIDE_BUILD_VOLUME");
+    console.error(JSON.stringify({
+      event: "manufacturing_estimate_failed",
+      jobId: claimed.estimate_id,
+      estimateId: claimed.estimate_id,
+      uploadId: input.uploadId,
+      engineVersion: profile.slicer_version,
+      profileVersion: profile.version,
+      durationMs: 0,
+      exitCode: null,
+      signal: null,
+      errorCode: "MODEL_OUTSIDE_BUILD_VOLUME",
+      orcaReturnCode: null,
+      stdoutTail: "",
+      stderrTail: "",
+      outputTruncated: false
+    }));
+    return jsonResponse(request, {
+      estimateId: claimed.estimate_id,
+      estimateStatus: "failed",
+      pollAfterMs: 1500
+    }, 202);
   }
 
   if (claimed.should_dispatch) {
@@ -127,8 +173,8 @@ Deno.serve(async (request: Request) => {
       profile,
       signedUrl: signed.signedUrl,
       extension: upload.extension,
-      sourceUnit: input.sourceUnit,
-      unitScale: input.unitScale
+      sourceUnit: authoritativeUnit.sourceUnit,
+      unitScale: authoritativeUnit.unitScale
     }));
   }
 

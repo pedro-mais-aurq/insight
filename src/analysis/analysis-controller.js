@@ -122,6 +122,11 @@ export function createAnalysisController({
     }
 
     const result = applyUserUnit(state.analysis.result, unitValue);
+
+    if (result === state.analysis.result) {
+      return;
+    }
+
     stateController.updateAnalysisResult(result);
 
     try {

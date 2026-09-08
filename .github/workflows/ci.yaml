@@ -37,5 +37,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build worker and run real Orca smoke slice
-        run: docker build --progress plain -t insight-slicer-worker:p5-orca-2.4.2 services/slicer-worker
+      - name: Run mandatory Orca 2.4.2 validation image
+        run: docker build --target validation --progress plain -t insight-slicer-validation:p5-orca-2.4.2-r4 services/slicer-worker
+
+      - name: Build release image from the validated marker
+        run: docker build --target final --progress plain -t insight-slicer-worker:p5-orca-2.4.2-r4 services/slicer-worker

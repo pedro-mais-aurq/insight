@@ -1,325 +1,0 @@
-#0 building with "desktop-linux" instance using docker driver
-
-#1 [internal] load build definition from Dockerfile
-#1 transferring dockerfile: 3.88kB 0.0s done
-#1 DONE 0.0s
-
-#2 [internal] load metadata for docker.io/library/ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
-#2 DONE 0.2s
-
-#3 [internal] load .dockerignore
-#3 transferring context: 73B done
-#3 DONE 0.0s
-
-#4 [orca 1/8] FROM docker.io/library/ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
-#4 resolve docker.io/library/ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517 0.0s done
-#4 CACHED
-
-#5 [internal] load build context
-#5 transferring context: 360B 0.0s done
-#5 DONE 0.0s
-
-#6 [orca 2/8] RUN apt update     && apt install -y --no-install-recommends ca-certificates     && rm -rf /var/lib/apt/lists/*     && apt install -y --no-install-recommends     --update     --snapshot "20260707T120000Z"     curl nodejs     && rm -rf /var/lib/apt/lists/*
-#6 0.230 
-#6 0.230 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#6 0.230 
-#6 0.675 Get:1 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
-#6 0.705 Get:2 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
-#6 1.765 Get:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1237 kB]
-#6 1.930 Get:4 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
-#6 2.209 Get:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
-#6 2.530 Get:6 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
-#6 2.748 Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
-#6 2.990 Get:8 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1530 kB]
-#6 3.313 Get:9 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [50.0 kB]
-#6 3.323 Get:10 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1786 kB]
-#6 3.514 Get:11 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
-#6 3.561 Get:12 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
-#6 7.499 Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1562 kB]
-#6 7.798 Get:14 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1903 kB]
-#6 7.977 Get:15 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.8 kB]
-#6 7.983 Get:16 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2151 kB]
-#6 8.333 Get:17 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [48.9 kB]
-#6 8.333 Get:18 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [35.9 kB]
-#6 8.334 Get:19 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [671 B]
-#6 9.098 Fetched 32.6 MB in 9s (3683 kB/s)
-#6 9.098 Reading package lists...
-#6 10.24 Building dependency tree...
-#6 10.50 Reading state information...
-#6 10.54 27 packages can be upgraded. Run 'apt list --upgradable' to see them.
-#6 10.54 
-#6 10.54 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#6 10.54 
-#6 10.57 Reading package lists...
-#6 11.77 Building dependency tree...
-#6 12.19 Reading state information...
-#6 12.60 The following additional packages will be installed:
-#6 12.60   libssl3t64 openssl
-#6 12.65 The following NEW packages will be installed:
-#6 12.65   ca-certificates openssl
-#6 12.66 The following packages will be upgraded:
-#6 12.66   libssl3t64
-#6 13.12 1 upgraded, 2 newly installed, 0 to remove and 26 not upgraded.
-#6 13.12 Need to get 3087 kB of archives.
-#6 13.12 After this operation, 2272 kB of additional disk space will be used.
-#6 13.12 Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libssl3t64 amd64 3.0.13-0ubuntu3.15 [1944 kB]
-#6 15.16 Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 openssl amd64 3.0.13-0ubuntu3.15 [1003 kB]
-#6 15.29 Get:3 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 ca-certificates all 20260601~24.04.1 [139 kB]
-#6 15.45 debconf: delaying package configuration, since apt-utils is not installed
-#6 15.49 Fetched 3087 kB in 3s (1178 kB/s)
-#6 15.54 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4381 files and directories currently installed.)
-#6 15.54 Preparing to unpack .../libssl3t64_3.0.13-0ubuntu3.15_amd64.deb ...
-#6 15.59 Unpacking libssl3t64:amd64 (3.0.13-0ubuntu3.15) over (3.0.13-0ubuntu3.12) ...
-#6 15.85 Setting up libssl3t64:amd64 (3.0.13-0ubuntu3.15) ...
-#6 15.94 Selecting previously unselected package openssl.
-#6 15.94 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4381 files and directories currently installed.)
-#6 15.94 Preparing to unpack .../openssl_3.0.13-0ubuntu3.15_amd64.deb ...
-#6 15.95 Unpacking openssl (3.0.13-0ubuntu3.15) ...
-#6 16.09 Selecting previously unselected package ca-certificates.
-#6 16.09 Preparing to unpack .../ca-certificates_20260601~24.04.1_all.deb ...
-#6 16.10 Unpacking ca-certificates (20260601~24.04.1) ...
-#6 16.21 Setting up openssl (3.0.13-0ubuntu3.15) ...
-#6 16.26 Setting up ca-certificates (20260601~24.04.1) ...
-#6 17.14 Updating certificates in /etc/ssl/certs...
-#6 17.89 121 added, 0 removed; done.
-#6 17.94 Processing triggers for libc-bin (2.39-0ubuntu8.8) ...
-#6 17.97 Processing triggers for ca-certificates (20260601~24.04.1) ...
-#6 17.98 Updating certificates in /etc/ssl/certs...
-#6 18.52 0 added, 0 removed; done.
-#6 18.52 Running hooks in /etc/ca-certificates/update.d...
-#6 18.52 done.
-#6 18.60 
-#6 18.60 WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
-#6 18.60 
-#6 19.07 Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
-#6 19.09 Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
-#6 19.64 Get:3 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble InRelease [256 kB]
-#6 20.14 Get:4 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1786 kB]
-#6 20.32 Get:5 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
-#6 20.61 Get:6 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
-#6 20.89 Get:7 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
-#6 20.97 Get:8 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
-#6 21.02 Get:9 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates InRelease [126 kB]
-#6 21.17 Get:10 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
-#6 21.36 Get:11 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1530 kB]
-#6 21.59 Get:12 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1237 kB]
-#6 21.65 Get:13 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-backports InRelease [126 kB]
-#6 22.03 Get:14 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [50.0 kB]
-#6 22.04 Get:15 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
-#6 22.18 Get:16 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-security InRelease [126 kB]
-#6 22.54 Get:17 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/multiverse amd64 Packages [331 kB]
-#6 23.10 Get:18 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 Packages [19.3 MB]
-#6 25.15 Get:19 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2151 kB]
-#6 25.49 Get:20 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1903 kB]
-#6 25.77 Get:21 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1562 kB]
-#6 26.02 Get:22 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [55.8 kB]
-#6 26.03 Get:23 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [48.9 kB]
-#6 26.03 Get:24 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [35.9 kB]
-#6 26.17 Get:25 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages [671 B]
-#6 28.74 Get:26 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 Packages [1808 kB]
-#6 28.96 Get:27 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/restricted amd64 Packages [117 kB]
-#6 29.05 Get:28 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 Packages [1342 kB]
-#6 29.23 Get:29 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/multiverse amd64 Packages [49.5 kB]
-#6 29.38 Get:30 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/universe amd64 Packages [2111 kB]
-#6 29.67 Get:31 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/restricted amd64 Packages [1490 kB]
-#6 30.06 Get:32 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-backports/main amd64 Packages [48.9 kB]
-#6 30.14 Get:33 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-backports/multiverse amd64 Packages [671 B]
-#6 30.25 Get:34 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-backports/universe amd64 Packages [35.9 kB]
-#6 30.38 Get:35 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-security/restricted amd64 Packages [1417 kB]
-#6 30.60 Get:36 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-security/multiverse amd64 Packages [43.8 kB]
-#6 30.61 Get:37 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-security/universe amd64 Packages [1490 kB]
-#6 30.94 Get:38 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-security/main amd64 Packages [1022 kB]
-#6 31.17 Fetched 63.8 MB in 13s (5098 kB/s)
-#6 31.17 Reading package lists...
-#6 32.49 Building dependency tree...
-#6 32.76 Reading state information...
-#6 32.79 All packages are up to date.
-#6 32.83 Reading package lists...
-#6 34.13 Building dependency tree...
-#6 34.37 Reading state information...
-#6 34.76 The following additional packages will be installed:
-#6 34.76   libbrotli1 libcares2 libcurl4t64 libgssapi-krb5-2 libicu74 libk5crypto3
-#6 34.76   libkeyutils1 libkrb5-3 libkrb5support0 libldap2 libnghttp2-14 libnode109
-#6 34.76   libpsl5t64 librtmp1 libsasl2-2 libsasl2-modules-db libssh-4 libuv1t64
-#6 34.76   node-acorn node-busboy node-cjs-module-lexer node-undici node-xtend
-#6 34.76 Suggested packages:
-#6 34.76   krb5-doc krb5-user npm
-#6 34.76 Recommended packages:
-#6 34.76   krb5-locales libldap-common publicsuffix libsasl2-modules nodejs-doc
-#6 34.91 The following NEW packages will be installed:
-#6 34.92   curl libbrotli1 libcares2 libcurl4t64 libgssapi-krb5-2 libicu74 libk5crypto3
-#6 34.94   libkeyutils1 libkrb5-3 libkrb5support0 libldap2 libnghttp2-14 libnode109
-#6 34.94   libpsl5t64 librtmp1 libsasl2-2 libsasl2-modules-db libssh-4 libuv1t64
-#6 34.94   node-acorn node-busboy node-cjs-module-lexer node-undici node-xtend nodejs
-#6 35.82 0 upgraded, 25 newly installed, 0 to remove and 0 not upgraded.
-#6 35.82 Need to get 25.6 MB of archives.
-#6 35.82 After this operation, 98.0 MB of additional disk space will be used.
-#6 35.82 Get:1 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libkrb5support0 amd64 1.20.1-6ubuntu2.6 [34.4 kB]
-#6 36.55 Get:2 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libk5crypto3 amd64 1.20.1-6ubuntu2.6 [82.0 kB]
-#6 36.93 Get:3 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 libkeyutils1 amd64 1.6.3-3build1 [9490 B]
-#6 37.04 Get:4 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libkrb5-3 amd64 1.20.1-6ubuntu2.6 [348 kB]
-#6 37.77 Get:5 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libgssapi-krb5-2 amd64 1.20.1-6ubuntu2.6 [143 kB]
-#6 38.05 Get:6 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libicu74 amd64 74.2-1ubuntu3.1 [10.9 MB]
-#6 40.00 Get:7 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libnghttp2-14 amd64 1.59.0-1ubuntu0.4 [74.6 kB]
-#6 40.07 Get:8 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 libpsl5t64 amd64 0.21.2-1.1build1 [57.1 kB]
-#6 40.37 Get:9 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 libuv1t64 amd64 1.48.0-1.1build1 [97.3 kB]
-#6 40.47 Get:10 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 libbrotli1 amd64 1.1.0-2build2 [331 kB]
-#6 40.78 Get:11 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-5ubuntu3.1 [20.4 kB]
-#6 40.84 Get:12 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-5ubuntu3.1 [53.2 kB]
-#6 40.92 Get:13 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libldap2 amd64 2.6.10+dfsg-0ubuntu0.24.04.1 [198 kB]
-#6 40.97 Get:14 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2build7 [56.3 kB]
-#6 41.06 Get:15 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libssh-4 amd64 0.10.6-2ubuntu0.4 [190 kB]
-#6 41.14 Get:16 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 libcurl4t64 amd64 8.5.0-2ubuntu10.10 [343 kB]
-#6 41.90 Get:17 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble-updates/main amd64 curl amd64 8.5.0-2ubuntu10.10 [227 kB]
-#6 41.98 Get:18 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/main amd64 libcares2 amd64 1.27.0-1.0ubuntu1 [73.7 kB]
-#6 42.06 Get:19 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 node-xtend all 4.0.2-3 [3902 B]
-#6 42.50 Get:20 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 nodejs amd64 18.19.1+dfsg-6ubuntu5 [306 kB]
-#6 42.64 Get:21 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 node-acorn all 8.8.1+ds+~cs25.17.7-2 [115 kB]
-#6 42.69 Get:22 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 node-cjs-module-lexer all 1.2.3+dfsg-1 [32.1 kB]
-#6 42.76 Get:23 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 node-busboy all 1.6.0+~cs2.6.0-2 [17.3 kB]
-#6 42.86 Get:24 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 node-undici all 5.26.3+dfsg1+~cs23.10.12-2 [325 kB]
-#6 53.18 Get:25 https://snapshot.ubuntu.com/ubuntu/20260707T120000Z noble/universe amd64 libnode109 amd64 18.19.1+dfsg-6ubuntu5 [11.6 MB]
-#6 55.24 debconf: delaying package configuration, since apt-utils is not installed
-#6 55.28 Fetched 25.6 MB in 20s (1291 kB/s)
-#6 55.32 Selecting previously unselected package libkrb5support0:amd64.
-#6 55.32 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4837 files and directories currently installed.)
-#6 55.34 Preparing to unpack .../00-libkrb5support0_1.20.1-6ubuntu2.6_amd64.deb ...
-#6 55.36 Unpacking libkrb5support0:amd64 (1.20.1-6ubuntu2.6) ...
-#6 55.41 Selecting previously unselected package libk5crypto3:amd64.
-#6 55.41 Preparing to unpack .../01-libk5crypto3_1.20.1-6ubuntu2.6_amd64.deb ...
-#6 55.42 Unpacking libk5crypto3:amd64 (1.20.1-6ubuntu2.6) ...
-#6 55.47 Selecting previously unselected package libkeyutils1:amd64.
-#6 55.47 Preparing to unpack .../02-libkeyutils1_1.6.3-3build1_amd64.deb ...
-#6 55.48 Unpacking libkeyutils1:amd64 (1.6.3-3build1) ...
-#6 55.57 Selecting previously unselected package libkrb5-3:amd64.
-#6 55.57 Preparing to unpack .../03-libkrb5-3_1.20.1-6ubuntu2.6_amd64.deb ...
-#6 55.58 Unpacking libkrb5-3:amd64 (1.20.1-6ubuntu2.6) ...
-#6 55.64 Selecting previously unselected package libgssapi-krb5-2:amd64.
-#6 55.64 Preparing to unpack .../04-libgssapi-krb5-2_1.20.1-6ubuntu2.6_amd64.deb ...
-#6 55.65 Unpacking libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.6) ...
-#6 55.72 Selecting previously unselected package libicu74:amd64.
-#6 55.72 Preparing to unpack .../05-libicu74_74.2-1ubuntu3.1_amd64.deb ...
-#6 55.73 Unpacking libicu74:amd64 (74.2-1ubuntu3.1) ...
-#6 56.14 Selecting previously unselected package libnghttp2-14:amd64.
-#6 56.14 Preparing to unpack .../06-libnghttp2-14_1.59.0-1ubuntu0.4_amd64.deb ...
-#6 56.14 Unpacking libnghttp2-14:amd64 (1.59.0-1ubuntu0.4) ...
-#6 56.20 Selecting previously unselected package libpsl5t64:amd64.
-#6 56.20 Preparing to unpack .../07-libpsl5t64_0.21.2-1.1build1_amd64.deb ...
-#6 56.21 Unpacking libpsl5t64:amd64 (0.21.2-1.1build1) ...
-#6 56.26 Selecting previously unselected package libuv1t64:amd64.
-#6 56.26 Preparing to unpack .../08-libuv1t64_1.48.0-1.1build1_amd64.deb ...
-#6 56.27 Unpacking libuv1t64:amd64 (1.48.0-1.1build1) ...
-#6 56.36 Selecting previously unselected package libbrotli1:amd64.
-#6 56.36 Preparing to unpack .../09-libbrotli1_1.1.0-2build2_amd64.deb ...
-#6 56.37 Unpacking libbrotli1:amd64 (1.1.0-2build2) ...
-#6 56.42 Selecting previously unselected package libsasl2-modules-db:amd64.
-#6 56.42 Preparing to unpack .../10-libsasl2-modules-db_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
-#6 56.43 Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
-#6 57.10 Selecting previously unselected package libsasl2-2:amd64.
-#6 57.11 Preparing to unpack .../11-libsasl2-2_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
-#6 57.12 Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
-#6 57.19 Selecting previously unselected package libldap2:amd64.
-#6 57.19 Preparing to unpack .../12-libldap2_2.6.10+dfsg-0ubuntu0.24.04.1_amd64.deb ...
-#6 57.24 Unpacking libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
-#6 57.32 Selecting previously unselected package librtmp1:amd64.
-#6 57.32 Preparing to unpack .../13-librtmp1_2.4+20151223.gitfa8646d.1-2build7_amd64.deb ...
-#6 57.33 Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
-#6 57.41 Selecting previously unselected package libssh-4:amd64.
-#6 57.41 Preparing to unpack .../14-libssh-4_0.10.6-2ubuntu0.4_amd64.deb ...
-#6 57.42 Unpacking libssh-4:amd64 (0.10.6-2ubuntu0.4) ...
-#6 57.50 Selecting previously unselected package libcurl4t64:amd64.
-#6 57.50 Preparing to unpack .../15-libcurl4t64_8.5.0-2ubuntu10.10_amd64.deb ...
-#6 57.51 Unpacking libcurl4t64:amd64 (8.5.0-2ubuntu10.10) ...
-#6 57.56 Selecting previously unselected package curl.
-#6 57.56 Preparing to unpack .../16-curl_8.5.0-2ubuntu10.10_amd64.deb ...
-#6 57.57 Unpacking curl (8.5.0-2ubuntu10.10) ...
-#6 57.62 Selecting previously unselected package libcares2:amd64.
-#6 57.62 Preparing to unpack .../17-libcares2_1.27.0-1.0ubuntu1_amd64.deb ...
-#6 57.66 Unpacking libcares2:amd64 (1.27.0-1.0ubuntu1) ...
-#6 57.70 Selecting previously unselected package node-xtend.
-#6 57.70 Preparing to unpack .../18-node-xtend_4.0.2-3_all.deb ...
-#6 57.71 Unpacking node-xtend (4.0.2-3) ...
-#6 57.76 Selecting previously unselected package nodejs.
-#6 57.76 Preparing to unpack .../19-nodejs_18.19.1+dfsg-6ubuntu5_amd64.deb ...
-#6 57.76 Unpacking nodejs (18.19.1+dfsg-6ubuntu5) ...
-#6 57.87 Selecting previously unselected package node-acorn.
-#6 57.87 Preparing to unpack .../20-node-acorn_8.8.1+ds+~cs25.17.7-2_all.deb ...
-#6 57.88 Unpacking node-acorn (8.8.1+ds+~cs25.17.7-2) ...
-#6 57.96 Selecting previously unselected package node-cjs-module-lexer.
-#6 57.96 Preparing to unpack .../21-node-cjs-module-lexer_1.2.3+dfsg-1_all.deb ...
-#6 57.97 Unpacking node-cjs-module-lexer (1.2.3+dfsg-1) ...
-#6 58.01 Selecting previously unselected package node-busboy.
-#6 58.01 Preparing to unpack .../22-node-busboy_1.6.0+~cs2.6.0-2_all.deb ...
-#6 58.02 Unpacking node-busboy (1.6.0+~cs2.6.0-2) ...
-#6 58.07 Selecting previously unselected package node-undici.
-#6 58.07 Preparing to unpack .../23-node-undici_5.26.3+dfsg1+~cs23.10.12-2_all.deb ...
-#6 58.08 Unpacking node-undici (5.26.3+dfsg1+~cs23.10.12-2) ...
-#6 58.21 Selecting previously unselected package libnode109:amd64.
-#6 58.21 Preparing to unpack .../24-libnode109_18.19.1+dfsg-6ubuntu5_amd64.deb ...
-#6 58.22 Unpacking libnode109:amd64 (18.19.1+dfsg-6ubuntu5) ...
-#6 58.80 Setting up libkeyutils1:amd64 (1.6.3-3build1) ...
-#6 58.82 Setting up libbrotli1:amd64 (1.1.0-2build2) ...
-#6 58.84 Setting up libuv1t64:amd64 (1.48.0-1.1build1) ...
-#6 58.86 Setting up libpsl5t64:amd64 (0.21.2-1.1build1) ...
-#6 58.88 Setting up libnghttp2-14:amd64 (1.59.0-1ubuntu0.4) ...
-#6 58.90 Setting up node-cjs-module-lexer (1.2.3+dfsg-1) ...
-#6 58.92 Setting up libkrb5support0:amd64 (1.20.1-6ubuntu2.6) ...
-#6 58.94 Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
-#6 58.96 Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
-#6 59.01 Setting up libcares2:amd64 (1.27.0-1.0ubuntu1) ...
-#6 59.03 Setting up libk5crypto3:amd64 (1.20.1-6ubuntu2.6) ...
-#6 59.05 Setting up libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
-#6 59.07 Setting up libicu74:amd64 (74.2-1ubuntu3.1) ...
-#6 59.09 Setting up libkrb5-3:amd64 (1.20.1-6ubuntu2.6) ...
-#6 59.11 Setting up node-xtend (4.0.2-3) ...
-#6 59.13 Setting up libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
-#6 59.15 Setting up node-busboy (1.6.0+~cs2.6.0-2) ...
-#6 59.17 Setting up libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.6) ...
-#6 59.19 Setting up libssh-4:amd64 (0.10.6-2ubuntu0.4) ...
-#6 59.21 Setting up node-undici (5.26.3+dfsg1+~cs23.10.12-2) ...
-#6 59.23 Setting up libcurl4t64:amd64 (8.5.0-2ubuntu10.10) ...
-#6 59.25 Setting up curl (8.5.0-2ubuntu10.10) ...
-#6 59.31 Setting up node-acorn (8.8.1+ds+~cs25.17.7-2) ...
-#6 59.32 Setting up libnode109:amd64 (18.19.1+dfsg-6ubuntu5) ...
-#6 59.34 Setting up nodejs (18.19.1+dfsg-6ubuntu5) ...
-#6 59.36 update-alternatives: using /usr/bin/nodejs to provide /usr/bin/js (js) in auto mode
-#6 59.36 update-alternatives: warning: skip creation of /usr/share/man/man1/js.1.gz because associated file /usr/share/man/man1/nodejs.1.gz (of link group js) doesn't exist
-#6 59.37 Processing triggers for libc-bin (2.39-0ubuntu8.8) ...
-#6 DONE 64.5s
-
-#7 [orca 3/8] WORKDIR /build
-#7 DONE 0.5s
-
-#8 [orca 4/8] RUN curl --fail --location --proto '=https' --tlsv1.2     --output OrcaSlicer.AppImage "https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.4.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage"     && echo "d12fb8c8eac1aecd2dfb6377acd48f994f8fa439ed5292fa532dd82880f029fd  OrcaSlicer.AppImage" | sha256sum --check --strict     && chmod 0555 OrcaSlicer.AppImage     && ./OrcaSlicer.AppImage --appimage-extract >/dev/null     && test -x squashfs-root/AppRun     && test -d squashfs-root/resources/profiles
-#8 0.753   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-#8 0.753                                  Dload  Upload   Total   Spent    Left  Speed
-#8 0.753   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-#8 1.882   3  131M    3 4493k    0     0  3981k      0  0:00:33  0:00:01  0:00:32 3981k  8  131M    8 11.7M    0     0  5637k      0  0:00:23  0:00:02  0:00:21 7504k 14  131M   14 19.5M    0     0  6386k      0  0:00:21  0:00:03  0:00:18 7741k 20  131M   20 27.3M    0     0  6781k      0  0:00:19  0:00:04  0:00:15 7834k 26  131M   26 35.3M    0     0  7050k      0  0:00:19  0:00:05  0:00:14 7915k 33  131M   33 43.5M    0     0  7273k      0  0:00:18  0:00:06  0:00:12 8016k 38  131M   38 51.1M    0     0  7341k      0  0:00:18  0:00:07  0:00:11 8067k 44  131M   44 58.3M    0     0  7349k      0  0:00:18  0:00:08  0:00:10 7953k 50  131M   50 66.5M    0     0  7464k      0  0:00:18  0:00:09  0:00:09 8029k 56  131M   56 74.5M    0     0  7541k      0  0:00:17  0:00:10  0:00:07 8044k 62  131M   62 81.9M    0     0  7535k      0  0:00:17  0:00:11  0:00:06 7855k 68  131M   68 89.7M    0     0  7574k      0  0:00:17  0:00:12  0:00:05 7905k 74  131M   74 98.3M    0     0  7670k      0  0:00:17  0:00:13  0:00:04 8191k 80  131M   80  106M    0     0  7701k      0  0:00:17  0:00:14  0:00:03 8135k 86  131M   86  114M    0     0  7730k      0  0:00:17  0:00:15  0:00:02 8115k 92  131M   92  121M    0     0  7690k      0  0:00:17  0:00:16  0:00:01 8035k 98  131M   98  129M    0     0  7750k      0  0:00:17  0:00:17 --:--:-- 8177k100  131M  100  131M    0     0  7757k      0  0:00:17  0:00:17 --:--:-- 8031k
-#8 18.50 OrcaSlicer.AppImage: OK
-#8 DONE 32.8s
-
-#9 [orca 5/8] COPY package.json /build/package.json
-#9 DONE 0.2s
-
-#10 [orca 6/8] COPY src/profile /build/src/profile
-#10 DONE 0.1s
-
-#11 [orca 7/8] COPY scripts/flatten-presets.js /build/scripts/flatten-presets.js
-#11 DONE 0.1s
-
-#12 [orca 8/8] RUN node /build/scripts/flatten-presets.js
-#12 7.024 PROFILE_NAME_AMBIGUOUS:machine:fdm_bbl_3dp_001_common
-#12 ERROR: process "/bin/sh -c node /build/scripts/flatten-presets.js" did not complete successfully: exit code: 1
-------
- > [orca 8/8] RUN node /build/scripts/flatten-presets.js:
-7.024 PROFILE_NAME_AMBIGUOUS:machine:fdm_bbl_3dp_001_common
-------
-Dockerfile:34
---------------------
-  32 |         ORCA_VERSION=2.4.2 \
-  33 |         PROFILE_GENERATED_AT=2026-07-07T03:33:00.000Z
-  34 | >>> RUN node /build/scripts/flatten-presets.js
-  35 |     
-  36 |     FROM ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517 AS runtime
---------------------
-ERROR: failed to build: failed to solve: process "/bin/sh -c node /build/scripts/flatten-presets.js" did not complete successfully: exit code: 1

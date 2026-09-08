@@ -14,7 +14,7 @@ test("endpoint assinado baixa por URL temporária e devolve apenas métricas", a
   const workRoot = await mkdtemp(path.join(os.tmpdir(), "insight-server-test-"));
   await mkdir(workRoot, { recursive: true });
   const profile = {
-    manifest: { engine: "OrcaSlicer", engineVersion: "2.4.2", profileKey: "insight-a1m-pla-020-v1", profileVersion: 1, profileFingerprint: fingerprint },
+    manifest: { engine: "OrcaSlicer", engineVersion: "2.4.2", profileKey: "insight-estimation-a1m-pla-020-v1", profileVersion: 1, profileFingerprint: fingerprint },
     files: { machine: "machine.json", process: "process.json", filament: "filament.json" }
   };
   const adapter = {
@@ -67,7 +67,7 @@ test("endpoint assinado baixa por URL temporária e devolve apenas métricas", a
       resultSource: "slice_info.config",
       slicerEngine: "OrcaSlicer",
       slicerVersion: "2.4.2",
-      profileKey: "insight-a1m-pla-020-v1",
+      profileKey: "insight-estimation-a1m-pla-020-v1",
       profileFingerprint: fingerprint,
       engine: { name: "OrcaSlicer", version: "2.4.2" }
     });
@@ -80,7 +80,7 @@ test("endpoint assinado baixa por URL temporária e devolve apenas métricas", a
 test("health falha fechado quando binário ou profiles deixam de ser válidos", async () => {
   const workRoot = await mkdtemp(path.join(os.tmpdir(), "insight-health-test-"));
   const profile = {
-    manifest: { engine: "OrcaSlicer", engineVersion: "2.4.2", profileKey: "insight-a1m-pla-020-v1", profileVersion: 1, profileFingerprint: fingerprint }
+    manifest: { engine: "OrcaSlicer", engineVersion: "2.4.2", profileKey: "insight-estimation-a1m-pla-020-v1", profileVersion: 1, profileFingerprint: fingerprint }
   };
   const server = createSlicerServer({
     profile,

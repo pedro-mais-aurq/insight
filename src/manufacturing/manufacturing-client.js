@@ -13,7 +13,7 @@ export function createManufacturingClient({ getClient = getSupabaseClient } = {}
     const data = await invoke(getClient(), "start-manufacturing-estimate", input);
     if (
       typeof data?.estimateId !== "string"
-      || !["pending", "processing", "completed"].includes(data.estimateStatus)
+      || !["pending", "processing", "completed", "failed"].includes(data.estimateStatus)
       || !Number.isSafeInteger(data.pollAfterMs)
       || data.pollAfterMs < 250
       || data.pollAfterMs > 10_000

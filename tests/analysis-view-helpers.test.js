@@ -7,6 +7,7 @@ import {
   getAnalysisErrorMessage,
   getAnalysisWarningMessage,
   integrityLabel,
+  isAnalysisUnitEditable,
   shouldShowAnalysisRetry
 } from "../src/analysis/analysis-view.js";
 
@@ -61,5 +62,15 @@ describe("formatação de análise", () => {
     expect(getAnalysisErrorMessage("UPLOAD_STATE_INVALID")).toContain(
       "novo envio"
     );
+  });
+
+  it("torna imutável a unidade declarada pelo próprio arquivo", () => {
+    expect(isAnalysisUnitEditable({
+      unit: { value: "mm", source: "file", confirmed: true }
+    })).toBe(false);
+    expect(isAnalysisUnitEditable({
+      unit: { value: "cm", source: "user", confirmed: true }
+    })).toBe(true);
+    expect(isAnalysisUnitEditable(null)).toBe(false);
   });
 });

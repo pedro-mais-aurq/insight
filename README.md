@@ -14,7 +14,9 @@ Landing page da Insight para serviços de impressão 3D.
 
 O deploy de produção permanece bloqueado até o `docker build` concluir o smoke real,
 o fingerprint emitido pela imagem ser ativado no banco e o gate
-`CALIBRATION_PENDING` ser aprovado. Nenhum resultado de slicing foi simulado.
+`CALIBRATION_PENDING` ser aprovado. Nenhum resultado de slicing foi simulado. A rodada
+de hardening `p5-orca-2.4.2-r4` usa um profile virtual finito apenas para estimativa,
+mantendo o profile físico da A1 mini intacto.
 
 ## Pré-requisitos
 
@@ -78,4 +80,4 @@ O agendamento horário de retenção está preparado em `supabase/schedules/setu
 
 ## Arquitetura
 
-Consulte [`docs/ARCHITECTURE_P1.md`](docs/ARCHITECTURE_P1.md) para a foundation, [`docs/ARCHITECTURE_P2.md`](docs/ARCHITECTURE_P2.md) para o fluxo de upload, [`docs/ARCHITECTURE_P3.md`](docs/ARCHITECTURE_P3.md) para análise/viewer, [`docs/ARCHITECTURE_P4.md`](docs/ARCHITECTURE_P4.md) para precificação e [`docs/ARCHITECTURE_P5.md`](docs/ARCHITECTURE_P5.md) para slicing. O deploy completo está em [`docs/DEPLOY_P5.md`](docs/DEPLOY_P5.md).
+Consulte [`docs/ARCHITECTURE_P1.md`](docs/ARCHITECTURE_P1.md) para a foundation, [`docs/ARCHITECTURE_P2.md`](docs/ARCHITECTURE_P2.md) para o fluxo de upload, [`docs/ARCHITECTURE_P3.md`](docs/ARCHITECTURE_P3.md) para análise/viewer, [`docs/ARCHITECTURE_P4.md`](docs/ARCHITECTURE_P4.md) para precificação e [`docs/ARCHITECTURE_P5.md`](docs/ARCHITECTURE_P5.md) para slicing. O deploy completo está em [`docs/DEPLOY_P5.md`](docs/DEPLOY_P5.md) e o relatório da rodada atual em [`docs/DELIVERY_P5_R4.md`](docs/DELIVERY_P5_R4.md).

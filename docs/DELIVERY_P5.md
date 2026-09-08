@@ -1,5 +1,8 @@
 # Relatório de entrega — P5 Manufacturing Estimation / Slicing
 
+> Este documento registra a entrega P5 inicial. A rodada de hardening atual está em
+> `DELIVERY_P5_R4.md` e prevalece onde houver diferença operacional.
+
 ## 1. Baseline P4 real encontrado
 
 O baseline é o projeto em `work/merged/insight-p4`, originado do pacote completo P4.

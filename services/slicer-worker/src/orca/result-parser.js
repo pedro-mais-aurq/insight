@@ -1,5 +1,5 @@
-export const DEFAULT_MAX_WEIGHT_GRAMS = 10_000;
-export const DEFAULT_MAX_PRINT_TIME_SECONDS = 30 * 24 * 60 * 60;
+export const DEFAULT_MAX_WEIGHT_GRAMS = 100_000;
+export const DEFAULT_MAX_PRINT_TIME_SECONDS = 10_000 * 60 * 60;
 
 export function parseSliceResult({
   sliceInfoXml,

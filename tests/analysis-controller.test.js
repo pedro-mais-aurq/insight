@@ -225,6 +225,29 @@ describe("createAnalysisController", () => {
     expect(test.workerClient.analyze).not.toHaveBeenCalled();
   });
 
+  it("não sobrescreve a unidade declarada dentro de um 3MF", async () => {
+    const test = harness();
+    test.parser.mockResolvedValueOnce({
+      format: "3mf",
+      object3D: { id: "object" },
+      meshCount: 1,
+      unit: { value: "mm", source: "file", confirmed: true }
+    });
+    await test.controller.analyze(test.getState());
+    test.stateController.updateAnalysisResult.mockClear();
+    test.analysisService.saveCompleted.mockClear();
+
+    await test.controller.changeUnit("cm");
+
+    expect(test.stateController.updateAnalysisResult).not.toHaveBeenCalled();
+    expect(test.analysisService.saveCompleted).not.toHaveBeenCalled();
+    expect(test.getState().analysis.result.unit).toEqual({
+      value: "mm",
+      source: "file",
+      confirmed: true
+    });
+  });
+
   it("encerra worker e viewer ao limpar ou substituir o modelo", () => {
     const test = harness();
 

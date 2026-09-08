@@ -3,6 +3,7 @@ import { OrcaSlicerAdapter } from "./orca/orca-adapter.js";
 import { loadProfile } from "./profile/profile-store.js";
 import { createSlicerServer } from "./server.js";
 import { createDownloadUrlPolicy } from "./security/url-policy.js";
+import { ESTIMATION_PROFILE_KEY } from "./profile/profile-definitions.js";
 
 const config = readConfig();
 await mkdir(config.workRoot, { recursive: true, mode: 0o700 });
@@ -46,15 +47,15 @@ function readConfig() {
     port: integerEnv("PORT", 8080, 1, 65535),
     workRoot: requiredEnv("WORK_ROOT"),
     profileRoot: requiredEnv("PROFILE_ROOT"),
-    profileKey: process.env.PROFILE_KEY ?? "insight-a1m-pla-020-v1",
+    profileKey: process.env.PROFILE_KEY ?? ESTIMATION_PROFILE_KEY,
     orcaBinary: requiredEnv("ORCA_SLICER_BIN"),
     hmacSecret: requiredEnv("WORKER_HMAC_SECRET", 32),
     downloadHosts: requiredEnv("MODEL_DOWNLOAD_HOSTS"),
-    slicerTimeoutMs: integerEnv("SLICER_TIMEOUT_MS", 90_000, 10_000, 90_000),
+    slicerTimeoutMs: integerEnv("SLICER_TIMEOUT_MS", 105_000, 10_000, 105_000),
     maxConcurrentSlices: integerEnv("SLICER_MAX_CONCURRENT", 1, 1, 1),
     maxModelBytes: integerEnv("MAX_MODEL_BYTES", 50_000_000, 1, 50_000_000),
-    maxWeightGrams: integerEnv("MAX_WEIGHT_GRAMS", 10_000, 1, 10_000),
-    maxPrintTimeSeconds: integerEnv("MAX_PRINT_TIME_SECONDS", 2_592_000, 1, 2_592_000)
+    maxWeightGrams: integerEnv("MAX_WEIGHT_GRAMS", 100_000, 1, 100_000),
+    maxPrintTimeSeconds: integerEnv("MAX_PRINT_TIME_SECONDS", 36_000_000, 1, 36_000_000)
   });
 }
 

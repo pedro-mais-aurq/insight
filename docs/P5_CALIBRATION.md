@@ -4,8 +4,11 @@ Status: **CALIBRATION_PENDING**. Nenhum fator empírico foi aplicado sem dados.
 
 ## Objetivo
 
-Medir o desvio entre OrcaSlicer 2.4.2 e a Bambu Lab A1 mini real usando exatamente o
-perfil `insight-a1m-pla-020-v1`, sem confundir erro do slicer com perda operacional.
+Medir o desvio entre OrcaSlicer 2.4.2 e a Bambu Lab A1 mini real usando a saída do
+perfil de manufacturing `insight-estimation-a1m-pla-020-v1`, sem confundir erro do
+slicer com perda operacional. Para esta comparação física, use somente amostras que
+caibam na mesa real. O profile de estimation conserva todos os parâmetros do profile
+real e altera apenas o volume disponível para o slicing comercial.
 
 ## Amostra mínima
 
@@ -16,8 +19,10 @@ PLA seco e a mesma impressora/nozzle.
 
 ## Golden comparison inicial
 
-Não preencha a tabela sem executar o mesmo arquivo e profile no worker e na GUI do
-OrcaSlicer 2.4.2. Os marcadores preservam o gate sem inventar medições.
+Não preencha a tabela sem executar o mesmo arquivo no worker com o profile de
+estimation e na GUI do OrcaSlicer 2.4.2 com o profile real aprovado. Para modelos que
+cabem em 180 mm, a única diferença entre os bundles — o volume máximo — não deve
+alterar as métricas. Os marcadores preservam o gate sem inventar medições.
 
 | Modelo | Worker peso | GUI peso | Erro peso | Worker tempo | GUI tempo | Erro tempo | Gate |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |

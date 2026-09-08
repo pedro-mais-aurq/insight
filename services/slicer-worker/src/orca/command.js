@@ -7,11 +7,8 @@ export function buildOrcaCommand({
   outputDir,
   profileFiles
 }) {
-  const settings =
-    `${profileFiles.process};${profileFiles.machine}`;
-
-  const exportFilename =
-    path.basename(outputPath);
+  const settings = `${profileFiles.process};${profileFiles.machine}`;
+  const exportFilename = path.basename(outputPath);
 
   const args = [
     "-a",
@@ -20,29 +17,19 @@ export function buildOrcaCommand({
 
     "--load-settings",
     settings,
-
     "--load-filaments",
     profileFiles.filament,
-
     "--arrange",
     "0",
-
     "--ensure-on-bed",
-
     "--slice",
     "0",
-
     "--outputdir",
     outputDir,
-
     "--export-3mf",
     exportFilename,
-
     inputPath
   ];
 
-  return Object.freeze({
-    command: "xvfb-run",
-    args: Object.freeze(args)
-  });
+  return Object.freeze({ command: "xvfb-run", args: Object.freeze(args) });
 }

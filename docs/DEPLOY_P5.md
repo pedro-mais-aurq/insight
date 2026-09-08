@@ -5,8 +5,17 @@
 Execute a partir da raiz do projeto:
 
 ```bash
-docker build -t insight-slicer-worker:p5-orca-2.4.2 services/slicer-worker
+docker build --target validation --progress plain \
+  -t insight-slicer-validation:p5-orca-2.4.2-r4 \
+  services/slicer-worker
+
+docker build --target final --progress plain \
+  -t insight-slicer-worker:p5-orca-2.4.2-r4 \
+  services/slicer-worker
 ```
+
+No Windows CMD, execute cada comando em uma linha. A imagem `final` só existe se o
+smoke real do OrcaSlicer 2.4.2 criar o marker após todos os slices.
 
 O build valida a AppImage com SHA-256 antes de extrair o OrcaSlicer e gerar os presets.
 No provedor escolhido, configure:
@@ -15,6 +24,11 @@ No provedor escolhido, configure:
 WORKER_HMAC_SECRET=<64+ caracteres hex aleatórios>
 MODEL_DOWNLOAD_HOSTS=<project-ref>.supabase.co
 PORT=8080
+PROFILE_KEY=insight-estimation-a1m-pla-020-v1
+SLICER_TIMEOUT_MS=105000
+SLICER_MAX_CONCURRENT=1
+MAX_WEIGHT_GRAMS=100000
+MAX_PRINT_TIME_SECONDS=36000000
 ```
 
 Exemplo local endurecido:
@@ -31,8 +45,21 @@ docker run --rm -p 8080:8080 \
   --security-opt no-new-privileges \
   -e WORKER_HMAC_SECRET="$WORKER_HMAC_SECRET" \
   -e MODEL_DOWNLOAD_HOSTS="<project-ref>.supabase.co" \
-  insight-slicer-worker:p5-orca-2.4.2
+  -e PROFILE_KEY="insight-estimation-a1m-pla-020-v1" \
+  -e SLICER_TIMEOUT_MS="105000" \
+  insight-slicer-worker:p5-orca-2.4.2-r4
 ```
+
+Confirme os dois fingerprints diretamente na imagem validada:
+
+```bash
+docker run --rm --entrypoint node insight-slicer-worker:p5-orca-2.4.2-r4 \
+  -e "const fs=require('node:fs'); for (const key of ['insight-a1m-pla-020-v1','insight-estimation-a1m-pla-020-v1']) { const m=JSON.parse(fs.readFileSync('/app/profiles/'+key+'/manifest.json')); console.log(key+'='+m.profileFingerprint); }"
+```
+
+O primeiro precisa ser exatamente
+`29b61bb6e0d3c5f9e7cfb8a763a735236ff25ee2af88111939d240cfe9be0d46`.
+Use o segundo na ativação do banco.
 
 Depois do deploy, valide `GET https://<worker>/health`. O corpo deve ser exatamente
 `{"status":"ok","engine":"OrcaSlicer","version":"2.4.2"}`. O fingerprint completo
@@ -47,6 +74,7 @@ Instale a CLI oficial, autentique e vincule o projeto:
 supabase login
 supabase link --project-ref <project-ref>
 supabase db push
+supabase migration list
 ```
 
 Defina os secrets. Para Vite local use `http://localhost:5173` — não
@@ -63,12 +91,11 @@ supabase secrets set \
 
 No Windows CMD, coloque tudo em uma linha ou use `^` em vez de `\`.
 
-Faça deploy das novas funções e redeploy da P4 quando houver mudança de secrets/CORS:
+Faça redeploy das duas funções P5, pois ambas empacotam o contrato compartilhado:
 
 ```bash
 supabase functions deploy start-manufacturing-estimate --no-verify-jwt
 supabase functions deploy get-manufacturing-estimate --no-verify-jwt
-supabase functions deploy estimate-model-price --no-verify-jwt
 ```
 
 Antes de aceitar jobs, copie o `profileFingerprint` do log `worker_ready` e ative o
@@ -76,9 +103,9 @@ perfil de forma explícita no banco. A migration o deixa inativo para impedir TO
 
 ```sql
 select public.activate_manufacturing_profile(
-  'insight-a1m-pla-020-v1',
+  'insight-estimation-a1m-pla-020-v1',
   1,
-  '<sha256-de-64-caracteres-do-worker>'
+  '<fingerprint-do-profile-de-estimation>'
 );
 ```
 
@@ -105,12 +132,34 @@ Service role, HMAC e URL interna do worker nunca usam prefixo `VITE_`.
 
 ## 4. Verificação
 
-1. Envie STL/OBJ, escolha unidade e confirme que o estado técnico fica `processing`.
+1. Envie STL/OBJ, confirme a unidade na P3 e confirme que o payload de manufacturing
+   não contém `unit`.
 2. Envie um 3MF com unidade declarada e confirme início automático.
 3. Aguarde peso/tempo e, em seguida, o preço da P4.
 4. Altere apenas quantidade e confirme que não surge novo job P5.
 5. Consulte logs por `estimateId`; URLs assinadas não devem aparecer.
 6. Rode os advisors de segurança e performance no Dashboard/MCP após `db push`.
+7. Teste um modelo acima de 180 mm e abaixo de 2000 mm; ele deve chegar ao Orca.
+8. Teste uma dimensão acima de 2000 mm; deve falhar antes de chamar o Orca.
+
+## 5. Render
+
+Sem fazer deploy automático, a configuração recomendada para um Web Service é:
+
+1. selecione o repositório/commit validado e runtime **Docker**;
+2. defina **Root Directory** como `services/slicer-worker` e **Dockerfile Path** como
+   `./Dockerfile` (o último estágio é `final`);
+3. use `/health` como Health Check Path e mantenha a porta fornecida por `PORT`;
+4. configure os envs do worker listados na seção 1, sem prefixo `VITE_`;
+5. mantenha uma única instância durante esta rodada e recursos de pelo menos 2 GiB RAM,
+   2 CPUs e storage efêmero suficiente para `/work`;
+6. publique somente depois do build `validation` local passar e fixe o deploy no mesmo
+   commit/tag da imagem `p5-orca-2.4.2-r4`;
+7. valide `/health`, confira `worker_ready` e só então ative o fingerprint novo.
+
+Se o fluxo usar registry em vez de build do Render, a tag imutável sugerida é
+`<registry>/insight-slicer-worker:p5-orca-2.4.2-r4`; faça `docker tag`/`docker push`
+somente após o validation gate.
 
 Se o JSON da função estiver correto mas a tela continuar neutra, confira no DevTools se
 o domínio publicado coincide exatamente com `ALLOWED_ORIGINS` e se o frontend novo foi

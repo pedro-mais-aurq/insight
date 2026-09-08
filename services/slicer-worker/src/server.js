@@ -156,40 +156,29 @@ async function executeJob({
     }));
     return result;
   } catch (error) {
- console.error(JSON.stringify({
-  event: "slice_failed",
-  jobId: job.jobId,
-  estimateId: job.jobId,
-  uploadId: job.uploadId,
-  engineVersion: profile.manifest.engineVersion,
-  profileVersion: job.profileVersion,
-  durationMs: Date.now() - startedAt,
-
-  exitCode:
-    error?.details?.code ?? null,
-
-  signal:
-    error?.details?.signal ?? null,
-
-  errorCode:
-    publicErrorCode(error),
-
-  stdoutTail:
-    error?.details?.stdoutTail ?? null,
-
-  stderrTail:
-    error?.details?.stderrTail ?? null,
-
-  outputTruncated:
-    error?.details?.outputTruncated ?? null
-}));
+    console.error(JSON.stringify({
+      event: "slice_failed",
+      jobId: job.jobId,
+      estimateId: job.jobId,
+      uploadId: job.uploadId,
+      engineVersion: profile.manifest.engineVersion,
+      profileVersion: job.profileVersion,
+      durationMs: Date.now() - startedAt,
+      exitCode: error?.details?.code ?? null,
+      signal: error?.details?.signal ?? null,
+      errorCode: error?.message ?? "SLICING_FAILED",
+      orcaReturnCode: error?.details?.orcaReturnCode ?? null,
+      stdoutTail: error?.details?.stdoutTail ?? "",
+      stderrTail: error?.details?.stderrTail ?? "",
+      outputTruncated: error?.details?.outputTruncated === true
+    }));
     throw error;
   } finally {
     await rm(workDir, { recursive: true, force: true });
   }
 }
 
-class SerialQueue {
+export class SerialQueue {
   constructor(maxQueued) {
     this.maxQueued = maxQueued;
     this.pending = 0;
@@ -200,8 +189,9 @@ class SerialQueue {
     if (this.pending >= this.maxQueued) return Promise.reject(new Error("WORKER_BUSY"));
     this.pending += 1;
     const operation = this.tail.then(task, task);
-    this.tail = operation.catch(() => {}).finally(() => { this.pending -= 1; });
-    return operation;
+    const released = operation.finally(() => { this.pending -= 1; });
+    this.tail = released.catch(() => {});
+    return released;
   }
 }
 
@@ -249,7 +239,9 @@ function publicErrorCode(error) {
     "SLICER_PROFILE_INVALID", "SLICER_OUTPUT_MISSING", "SLICER_OUTPUT_OUT_OF_RANGE",
     "SLICER_OUTPUT_AMBIGUOUS", "THREE_MF_INVALID", "THREE_MF_GEOMETRY_MISSING",
     "THREE_MF_PATH_INVALID", "THREE_MF_UNIT_MISMATCH", "SLICER_PROFILE_MISMATCH",
-    "WORKER_BUSY", "REQUEST_TOO_LARGE"
+    "THREE_MF_CANONICALIZATION_FAILED", "MODEL_NOT_SLICEABLE",
+    "ORCA_FILE_VERSION_UNSUPPORTED", "ORCA_NO_SUITABLE_OBJECTS",
+    "ORCA_SLICING_ERROR", "ORCA_PROCESS_CRASH", "WORKER_BUSY", "REQUEST_TOO_LARGE"
   ]);
   return allowed.has(error?.message) ? error.message : "SLICING_FAILED";
 }
