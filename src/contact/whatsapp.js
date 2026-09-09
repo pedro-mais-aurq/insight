@@ -2,7 +2,7 @@ import { MANUFACTURING_UI_CONFIG } from "../config/manufacturing-ui.config.js";
 
 const WHATSAPP_BASE_URL = "https://wa.me";
 const FORBIDDEN_PLACEHOLDER = /^(?:undefined|null|nan)$/i;
-const VITE_WHATSAPP_NUMBER= "554396522539"
+const VITE_WHATSAPP_NUMBER= "554396522539";
 
 export function normalizeWhatsAppNumber(value) {
   if (typeof value !== "string" && typeof value !== "number") {
