@@ -24,9 +24,11 @@ export class OrcaSlicerAdapter {
   async slice({ inputPath, extension, sourceUnit, unitScale, profile, workDir }) {
     const outputDir = path.join(workDir, "output");
     const runtimeHome = path.join(workDir, "runtime-home");
+    const runtimeDir = path.join(runtimeHome, ".runtime");
     await mkdir(outputDir, { recursive: true });
     await mkdir(path.join(runtimeHome, ".config"), { recursive: true });
     await mkdir(path.join(runtimeHome, ".cache"), { recursive: true });
+    await mkdir(runtimeDir, { recursive: true, mode: 0o700 });
     let slicerInput;
 
     if (extension === "3mf") {
@@ -67,6 +69,7 @@ export class OrcaSlicerAdapter {
           HOME: runtimeHome,
           XDG_CONFIG_HOME: path.join(runtimeHome, ".config"),
           XDG_CACHE_HOME: path.join(runtimeHome, ".cache"),
+          XDG_RUNTIME_DIR: runtimeDir,
           TMPDIR: workDir
         }
       });

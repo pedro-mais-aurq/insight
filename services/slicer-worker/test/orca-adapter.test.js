@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdtemp, rm, stat, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -60,6 +60,36 @@ test("preserva timeout e converte falha de spawn em indisponibilidade observáve
       () => spawnAdapter.slice({ inputPath, extension: "obj", sourceUnit: "mm", unitScale: 1, profile, workDir: path.join(root, "spawn") }),
       (error) => error.message === "SLICER_UNAVAILABLE" && error.details.code === null
     );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("cria XDG_RUNTIME_DIR 0700 exclusivo dentro do diretório do job", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "insight-adapter-runtime-"));
+  const workDir = path.join(root, "job-a");
+  const inputPath = path.join(root, "input.obj");
+  const profile = { files: { machine: "machine.json", process: "process.json", filament: "filament.json" } };
+  let processEnv;
+  await writeFile(inputPath, "v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 3\n");
+
+  try {
+    const adapter = new OrcaSlicerAdapter({
+      orcaBinary: "/missing",
+      run: async (_command, _args, options) => {
+        processEnv = options.env;
+        throw new Error("spawn ENOENT");
+      }
+    });
+    await assert.rejects(
+      () => adapter.slice({ inputPath, extension: "obj", sourceUnit: "mm", unitScale: 1, profile, workDir }),
+      /SLICER_UNAVAILABLE/
+    );
+
+    const expected = path.join(workDir, "runtime-home", ".runtime");
+    assert.equal(processEnv.XDG_RUNTIME_DIR, expected);
+    assert.equal(path.relative(workDir, processEnv.XDG_RUNTIME_DIR).startsWith(".."), false);
+    assert.equal((await stat(expected)).mode & 0o777, 0o700);
   } finally {
     await rm(root, { recursive: true, force: true });
   }

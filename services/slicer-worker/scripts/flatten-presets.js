@@ -7,12 +7,16 @@ import { APPROVED_REAL_PROFILE_FINGERPRINT } from "../src/profile/profile-defini
 
 prepareProfiles()
   .then(({ real, estimation }) => {
+    process.stdout.write(
+      `REAL_MACHINE_SHA256=${real.files.machine.sha256}\n`
+      + `REAL_PROCESS_SHA256=${real.files.process.sha256}\n`
+      + `REAL_FILAMENT_SHA256=${real.files.filament.sha256}\n`
+      + `REAL_PROFILE_FINGERPRINT=${real.profileFingerprint}\n`
+      + `ESTIMATION_PROFILE_FINGERPRINT=${estimation.profileFingerprint}\n`
+    );
     if (real.profileFingerprint !== APPROVED_REAL_PROFILE_FINGERPRINT) {
       throw new Error("APPROVED_REAL_PROFILE_FINGERPRINT_CHANGED");
     }
-    process.stdout.write(
-      `REAL_PROFILE_FINGERPRINT=${real.profileFingerprint}\nESTIMATION_PROFILE_FINGERPRINT=${estimation.profileFingerprint}\n`
-    );
   })
   .catch((error) => {
     process.stderr.write(`${error.message}\n`);

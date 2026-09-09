@@ -11,6 +11,8 @@ import {
   withEstimationBuildVolume
 } from "./profile-definitions.js";
 
+const OFFICIAL_VENDOR_DIRECTORY = "BBL";
+
 export async function prepareProfiles({
   sourceRoot = process.env.ORCA_PROFILE_SOURCE_ROOT,
   outputRoot = process.env.PROFILE_OUTPUT_ROOT,
@@ -21,7 +23,7 @@ export async function prepareProfiles({
     throw new Error("PROFILE_BUILD_CONFIGURATION_INVALID");
   }
 
-  const index = await buildProfileIndex(sourceRoot);
+  const index = await buildProfileIndex(path.join(sourceRoot, OFFICIAL_VENDOR_DIRECTORY));
   const resolved = Object.fromEntries(Object.entries(PROFILE_SELECTIONS).map(([type, name]) => [
     type,
     flattenNamedProfile(index, type, name)
@@ -84,20 +86,22 @@ async function writeProfile({
     };
   }
 
-  const manifestCore = {
-    schemaVersion: 1,
-    profileKey,
-    profileVersion: 1,
-    engine: "OrcaSlicer",
-    engineVersion: slicerVersion,
-    source: "OrcaSlicer release AppImage resources/profiles",
-    sourceReleaseUrl: "https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.4.2",
-    generatedAt,
-    selections: PROFILE_SELECTIONS,
-    supportPolicy: "official-process-preset",
-    files,
-    ...(manifestExtension ?? {})
-  };
+  const manifestCore = profileKey === REAL_PROFILE_KEY
+    ? buildPhysicalLegacyManifestCore({ slicerVersion, files, generatedAt, resolved })
+    : {
+        schemaVersion: 1,
+        profileKey,
+        profileVersion: 1,
+        engine: "OrcaSlicer",
+        engineVersion: slicerVersion,
+        source: "OrcaSlicer release AppImage resources/profiles",
+        sourceReleaseUrl: "https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/v2.4.2",
+        generatedAt,
+        selections: PROFILE_SELECTIONS,
+        supportPolicy: "official-process-preset",
+        files,
+        ...(manifestExtension ?? {})
+      };
   const profileFingerprint = sha256(canonicalJson(manifestCore));
   const manifest = { ...manifestCore, profileFingerprint };
   await writeFile(
@@ -107,6 +111,33 @@ async function writeProfile({
   );
 
   return manifest;
+}
+
+export function buildPhysicalLegacyManifestCore({
+  slicerVersion,
+  files,
+  generatedAt,
+  resolved
+}) {
+  return {
+    profileKey: REAL_PROFILE_KEY,
+    engine: "OrcaSlicer",
+    engineVersion: slicerVersion,
+    files: Object.fromEntries(Object.keys(PROFILE_SELECTIONS).map((type) => [
+      type,
+      {
+        file: files[type].file,
+        sha256: files[type].sha256
+      }
+    ])),
+    generatedAt,
+    vendor: OFFICIAL_VENDOR_DIRECTORY,
+    sourceProfileNames: PROFILE_SELECTIONS,
+    sourceProfileChains: Object.fromEntries(Object.keys(PROFILE_SELECTIONS).map((type) => [
+      type,
+      resolved[type].chain.map((entry) => typeof entry === "string" ? entry : entry.name)
+    ]))
+  };
 }
 
 function sha256(value) {

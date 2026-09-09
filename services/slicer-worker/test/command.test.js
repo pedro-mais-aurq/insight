@@ -14,11 +14,30 @@ test("constrói argv sem shell, sem orient e com perfis fechados", () => {
     profileFiles
   });
   assert.equal(invocation.command, "xvfb-run");
-  assert.ok(invocation.args.includes(maliciousPath));
+  assert.deepEqual(invocation.args, [
+    "-a",
+    "--server-args=-screen 0 1024x768x24",
+    "/opt/orca/AppRun",
+    "--load-settings",
+    "/profiles/process.json;/profiles/machine.json",
+    "--load-filaments",
+    "/profiles/filament.json",
+    "--arrange",
+    "0",
+    "--ensure-on-bed",
+    "--slice",
+    "0",
+    "--outputdir",
+    "/work",
+    "--export-3mf",
+    "out.gcode.3mf",
+    maliciousPath
+  ]);
   assert.equal(invocation.args.includes("--orient"), false);
   assert.equal(invocation.args.includes("--scale"), false);
   assert.equal(invocation.args.includes("--convert-unit"), false);
-  assert.equal(invocation.args.filter((item) => item === "--load-settings").length, 2);
+  assert.equal(invocation.args.includes("--center"), false);
+  assert.equal(invocation.args.filter((item) => item === "--load-settings").length, 1);
 });
 
 test("3MF preserva a orientação e não recebe escala duplicada", () => {
@@ -27,8 +46,11 @@ test("3MF preserva a orientação e não recebe escala duplicada", () => {
     outputPath: "/work/out.3mf", outputDir: "/work", profileFiles
   });
   assert.equal(invocation.args.includes("--scale"), false);
+  assert.equal(invocation.args.includes("--convert-unit"), false);
   assert.equal(invocation.args.includes("--orient"), false);
+  assert.equal(invocation.args.includes("--center"), false);
   assert.ok(invocation.args.includes("--ensure-on-bed"));
+  assert.equal(invocation.args.at(-1), "/work/model.3mf");
 });
 
 test("paths hostis permanecem argumentos literais e não viram flags", () => {
@@ -41,7 +63,7 @@ test("paths hostis permanecem argumentos literais e não viram flags", () => {
       profileFiles
     });
     assert.equal(invocation.command, "xvfb-run");
-    assert.equal(invocation.args[3], inputPath);
+    assert.equal(invocation.args.at(-1), inputPath);
     assert.equal(invocation.args.includes("--orient"), false);
   }
 });
