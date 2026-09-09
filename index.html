@@ -5,18 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Insight — Impressão 3D</title>
 <link rel="stylesheet" href="assets/css/style.css">
-<link rel = "icon" href = "assets/image/insight-logo.jpg">
+<link rel="icon" href="assets/image/insight-logo.svg" type="image/svg+xml">
 
 </head>
 <body>
 <header class="nav">
   <div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%">
-    <img class="logo" src="assets/image/insight-logo.jpg" alt="Insight">
+    <img class="logo" src="assets/image/insight-logo.svg" alt="Insight">
     <nav class="navlinks">
       <a href="#como-funciona">Como funciona</a>
       <a href="#galeria">Galeria</a>
       <a href="#imprimir">Imprimir</a>
-      <a href="#pedido">Acompanhar</a>
     </nav>
     <a class="btn dark" href="#imprimir">Começar</a>
   </div>
@@ -33,10 +32,13 @@
       <a class="btn light" href="#como-funciona">Como funciona</a>
     </div>
   </div>
-  <div class="hero-art">
-    <div class="bolt">ϟ</div>
-    <div class="big-mark">3D<br>INSIGHT</div>
-  </div>
+  <div
+    class="hero-art"
+    data-hero-printer
+    data-hero-printer-state="loading"
+    role="img"
+    aria-label="Impressora 3D animada construindo uma peça camada por camada"
+  ></div>
 </section>
 
 <section id="como-funciona" class="section">
@@ -81,12 +83,6 @@
       <div class="upload-summary">
         <div class="kicker" data-upload-eyebrow>Arquivo 3D</div>
         <h3 data-upload-title>Solte seu<br>modelo aqui.</h3>
-        <p
-          class="upload-file-meta"
-          id="upload-file-meta"
-          data-upload-file-meta
-          hidden
-        ></p>
       </div>
       <div
         class="drop"
@@ -106,26 +102,11 @@
         type="file"
         data-upload-input
         aria-label="Selecionar arquivo 3D"
-        aria-describedby="upload-file-meta upload-status"
+        aria-describedby="upload-status"
         hidden
       >
-      <p
-        class="upload-status"
-        id="upload-status"
-        data-upload-status
-        aria-live="polite"
-      ></p>
-      <div class="upload-actions" data-upload-actions hidden>
-        <button class="upload-action" type="button" data-upload-retry hidden>Tentar novamente</button>
-        <button class="upload-action" type="button" data-upload-replace>Substituir</button>
-        <button class="upload-action secondary" type="button" data-upload-remove>Remover</button>
-      </div>
       <section class="analysis-panel" data-analysis-panel hidden>
-        <p class="analysis-stage" data-analysis-stage aria-live="polite"></p>
-        <p class="analysis-error" data-analysis-error hidden></p>
-        <button class="upload-action" type="button" data-analysis-retry hidden>Tentar analisar novamente</button>
         <div class="model-viewer" data-model-viewer aria-label="Visualização 3D do modelo"></div>
-        <p class="viewer-unavailable" data-viewer-unavailable hidden>Preview 3D indisponível.</p>
         <div class="analysis-result" data-analysis-result hidden>
           <label class="analysis-unit-label">
             Unidade do modelo
@@ -139,17 +120,9 @@
           </label>
           <div class="analysis-grid">
             <div><span>Dimensões</span><strong data-analysis-dimensions>—</strong></div>
-            <div><span>Triângulos</span><strong data-analysis-triangles>—</strong></div>
-            <div><span>Meshes</span><strong data-analysis-meshes>—</strong></div>
-            <div><span>Vértices</span><strong data-analysis-vertices>—</strong></div>
             <div><span>Área superficial</span><strong data-analysis-area>—</strong></div>
             <div><span>Volume</span><strong data-analysis-volume>—</strong></div>
-            <div><span>Malha fechada</span><strong data-analysis-watertight>—</strong></div>
-            <div><span>Arestas abertas</span><strong data-analysis-open-edges>—</strong></div>
-            <div><span>Non-manifold</span><strong data-analysis-non-manifold>—</strong></div>
-            <div><span>Componentes</span><strong data-analysis-components>—</strong></div>
           </div>
-          <p class="analysis-warnings" data-analysis-warnings hidden></p>
         </div>
       </section>
     </div>
@@ -161,6 +134,95 @@
       data-pricing-state="unavailable"
     >
       <div class="kicker">Estimativa</div>
+      <div class="print-tools" data-print-tools>
+        <p
+          class="upload-status"
+          id="upload-status"
+          data-upload-status
+          aria-live="polite"
+          hidden
+        ></p>
+        <div class="upload-actions" data-upload-actions hidden>
+          <button class="upload-action" type="button" data-upload-retry hidden>Tentar novamente</button>
+          <button class="upload-action" type="button" data-upload-replace>Substituir arquivo</button>
+          <button class="upload-action secondary" type="button" data-upload-remove>Remover arquivo</button>
+        </div>
+        <p class="sr-only" data-analysis-stage aria-live="polite"></p>
+        <p class="print-notice error" data-analysis-error role="alert" hidden></p>
+        <button class="upload-action" type="button" data-analysis-retry hidden>Tentar analisar novamente</button>
+        <p class="print-notice" data-viewer-unavailable hidden>Preview 3D indisponível para este arquivo.</p>
+        <p class="print-notice" data-analysis-warnings hidden></p>
+      </div>
+      <section class="estimation-flow" data-flow-root aria-labelledby="estimation-flow-title" hidden>
+        <div class="estimation-flow-head">
+          <h3 id="estimation-flow-title">Etapas do seu modelo</h3>
+          <span>Atualização em tempo real</span>
+        </div>
+        <ol class="flow-steps" aria-live="polite" aria-atomic="false">
+          <li data-flow-step="upload" data-step-state="pending" data-step-warning="false">
+            <span class="flow-step-marker" data-flow-marker aria-hidden="true">○</span>
+            <span class="flow-step-copy"><strong>Upload</strong><small data-flow-message>Aguardando arquivo</small></span>
+            <span class="flow-step-warning" data-flow-step-warning hidden>atenção</span>
+            <span class="flow-progress" data-flow-progress data-progress-kind="none" role="progressbar" aria-label="Progresso do upload" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span class="flow-progress-track"><span class="flow-progress-fill" data-flow-progress-fill></span></span>
+              <span class="flow-progress-value" data-flow-progress-value></span>
+            </span>
+          </li>
+          <li data-flow-step="analysis" data-step-state="pending" data-step-warning="false">
+            <span class="flow-step-marker" data-flow-marker aria-hidden="true">○</span>
+            <span class="flow-step-copy"><strong>Análise</strong><small data-flow-message>Aguardando o envio</small></span>
+            <span class="flow-step-warning" data-flow-step-warning hidden>atenção</span>
+            <span class="flow-progress" data-flow-progress data-progress-kind="none" role="progressbar" aria-label="Progresso da análise" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span class="flow-progress-track"><span class="flow-progress-fill" data-flow-progress-fill></span></span>
+              <span class="flow-progress-value" data-flow-progress-value></span>
+            </span>
+          </li>
+          <li data-flow-step="preparation" data-step-state="pending" data-step-warning="false">
+            <span class="flow-step-marker" data-flow-marker aria-hidden="true">○</span>
+            <span class="flow-step-copy"><strong>Preparação</strong><small data-flow-message>Aguardando a análise</small></span>
+            <span class="flow-step-warning" data-flow-step-warning hidden>atenção</span>
+            <span class="flow-progress" data-flow-progress data-progress-kind="none" role="progressbar" aria-label="Progresso da preparação" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span class="flow-progress-track"><span class="flow-progress-fill" data-flow-progress-fill></span></span>
+              <span class="flow-progress-value" data-flow-progress-value></span>
+            </span>
+          </li>
+          <li data-flow-step="manufacturing" data-step-state="pending" data-step-warning="false">
+            <span class="flow-step-marker" data-flow-marker aria-hidden="true">○</span>
+            <span class="flow-step-copy"><strong>Estimativa</strong><small data-flow-message>Aguardando o preparo</small></span>
+            <span class="flow-step-warning" data-flow-step-warning hidden>atenção</span>
+            <span class="flow-progress" data-flow-progress data-progress-kind="none" role="progressbar" aria-label="Progresso da estimativa de fabricação" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span class="flow-progress-track"><span class="flow-progress-fill" data-flow-progress-fill></span></span>
+              <span class="flow-progress-value" data-flow-progress-value></span>
+            </span>
+          </li>
+          <li data-flow-step="pricing" data-step-state="pending" data-step-warning="false">
+            <span class="flow-step-marker" data-flow-marker aria-hidden="true">○</span>
+            <span class="flow-step-copy"><strong>Preço</strong><small data-flow-message>Aguardando a estimativa</small></span>
+            <span class="flow-step-warning" data-flow-step-warning hidden>atenção</span>
+            <span class="flow-progress" data-flow-progress data-progress-kind="none" role="progressbar" aria-label="Progresso da precificação" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span class="flow-progress-track"><span class="flow-progress-fill" data-flow-progress-fill></span></span>
+              <span class="flow-progress-value" data-flow-progress-value></span>
+            </span>
+          </li>
+        </ol>
+        <aside class="capacity-warning" data-capacity-warning role="status" hidden>
+          <span class="capacity-warning-icon" aria-hidden="true">!</span>
+          <div>
+            <strong data-capacity-warning-title></strong>
+            <p data-capacity-warning-description></p>
+            <a class="contact-inline" data-whatsapp-link target="_blank" rel="noopener noreferrer">Consultar a Insight no WhatsApp</a>
+          </div>
+        </aside>
+        <aside class="slow-analysis-notice" data-slow-analysis-notice role="status" hidden>
+          <span class="capacity-warning-icon" aria-hidden="true">!</span>
+          <div>
+            <strong>A análise está demorando mais que o esperado.</strong>
+            <p>A melhor opção pode ser consultar diretamente com a Insight.</p>
+            <a class="contact-inline" data-whatsapp-link target="_blank" rel="noopener noreferrer">Consultar a Insight no WhatsApp</a>
+          </div>
+        </aside>
+        <button class="manufacturing-retry" type="button" data-manufacturing-retry hidden>Tentar estimativa novamente</button>
+      </section>
       <div class="quote-row"><span>Material</span><strong>PLA</strong></div>
       <div class="quote-row"><span>Qualidade</span><strong>0,20 mm</strong></div>
       <div class="quote-row"><span>Perfil</span><strong data-manufacturing-profile>A1 mini · PLA · 0,20 mm</strong></div>
@@ -171,50 +233,50 @@
       </label>
       <div class="quote-row"><span>Filamento</span><strong data-manufacturing-weight>—</strong></div>
       <div class="quote-row"><span>Prazo estimado</span><strong data-manufacturing-time>Após análise</strong></div>
-      <div class="manufacturing-result">
-        <div class="kicker">Estimativa técnica</div>
+      <div class="quote-row"><span>Valor estimado</span><strong data-pricing-price>—</strong></div>
+      <div class="estimate-announcements sr-only">
         <p class="manufacturing-status" data-manufacturing-status aria-live="polite"></p>
-        <button class="manufacturing-retry" type="button" data-manufacturing-retry hidden>Tentar novamente</button>
-      </div>
-      <div class="pricing-result">
-        <div class="kicker">Estimativa comercial</div>
+        <div class="manufacturing-feedback" data-manufacturing-feedback role="alert" hidden>
+          <strong data-manufacturing-error-title></strong>
+          <p data-manufacturing-error-description></p>
+        </div>
         <p class="pricing-status" data-pricing-status aria-live="polite"></p>
-        <div class="price" data-pricing-price hidden></div>
       </div>
-      <a class="btn dark" style="margin-top:24px;width:100%" href="#pedido">Solicitar impressão</a>
+      <div class="contact-panel" data-whatsapp-panel hidden>
+        <div class="kicker">Próximo passo</div>
+        <p data-whatsapp-summary></p>
+        <a class="btn whatsapp" data-whatsapp-link target="_blank" rel="noopener noreferrer" aria-label="Consultar a Insight no WhatsApp">Consultar a Insight no WhatsApp</a>
+        <small data-whatsapp-config-warning hidden>O canal de WhatsApp aguarda configuração.</small>
+      </div>
     </div>
   </div>
 </div>
 </section>
 
-<section id="pedido" class="section">
-<div class="container">
-  <div class="section-head">
-    <h2>Acompanhe<br>o pedido.</h2>
-    <p>Impressão 3D de alta qualidade.</p>
-  </div>
-  <div class="card">
-    <div style="display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap">
-      <div><div class="kicker">Pedido #001</div><h3 style="font-family:'Barlow Condensed';font-size:42px;text-transform:uppercase;margin:8px 0">Em produção</h3></div>
-      <span class="status">EM PRODUÇÃO</span>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:30px">
-      <div><strong>01</strong><br><small>Recebido</small></div>
-      <div><strong>02</strong><br><small>Análise</small></div>
-      <div><strong>03</strong><br><small>Aprovado</small></div>
-      <div><strong>04</strong><br><small>Produção</small></div>
-      <div><strong>05</strong><br><small>Finalizado</small></div>
-    </div>
-  </div>
-</div>
-</section>
 </main>
 
-<footer>
-<div class="container">
-  <img src="assets/image/insight-logo.jpg" alt="Insight" style="height:48px;filter:invert(1);mix-blend-mode:screen">
-  <small>Insight — Do arquivo à peça.</small>
-</div>
+<footer class="site-footer">
+  <div class="container footer-main">
+    <div class="footer-brand">
+      <img class="footer-logo" src="assets/image/insight-logo.svg" alt="Insight">
+      <p>Transformamos modelos digitais em peças físicas com precisão, clareza e acompanhamento humano.</p>
+    </div>
+    <nav class="footer-links" aria-label="Navegação do rodapé">
+      <span class="footer-label">Explorar</span>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#imprimir">Imprimir</a>
+    </nav>
+    <div class="footer-callout">
+      <span class="footer-label">Seu próximo projeto</span>
+      <h2>Vamos dar forma à sua ideia.</h2>
+      <a class="footer-cta" href="#imprimir">Enviar modelo <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <small>Insight — Do arquivo à peça.</small>
+    <small>Impressão 3D · Brasil</small>
+  </div>
 </footer>
 
 <script type="module" src="/src/main.js"></script>

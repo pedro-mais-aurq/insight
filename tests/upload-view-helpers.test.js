@@ -1,25 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { UPLOAD_ERROR_CODES } from "../src/upload/file-validator.js";
 import {
-  formatFileSize,
   getErrorMessage,
   getReplaceActionLabel,
   getRetryActionLabel
 } from "../src/upload/upload-view.js";
-
-describe("formatFileSize", () => {
-  it.each([
-    [842, "842 B"],
-    [1024, "1 KB"],
-    [18.7 * 1024 * 1024, "18,7 MB"]
-  ])("formata %s bytes", (bytes, formatted) => {
-    expect(formatFileSize(bytes)).toBe(formatted);
-  });
-
-  it("não altera nem inventa representação para valor inválido", () => {
-    expect(formatFileSize(-1)).toBe("");
-  });
-});
 
 describe("mensagens e ações de retry", () => {
   const definitiveCompleteCodes = [

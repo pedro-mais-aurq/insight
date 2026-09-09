@@ -11,6 +11,9 @@ Landing page da Insight para serviços de impressão 3D.
 - Worker OCI com OrcaSlicer 2.4.2 pinado: implementado.
 - Estimativa automática de peso e tempo: implementada pela P5.
 - Integração P3 → P5 → P4: implementada.
+- Barra progressiva de análise, preparo, fabricação e preço: implementada e exibida somente após o início da análise.
+- Aviso de análise prolongada aos 20 segundos com atalho para contato: implementado.
+- Continuidade comercial por WhatsApp em sucesso ou falha: implementada; requer número oficial configurado.
 
 O deploy de produção permanece bloqueado até o `docker build` concluir o smoke real,
 o fingerprint emitido pela imagem ser ativado no banco e o gate
@@ -36,7 +39,13 @@ Copie `.env.example` para `.env` e preencha:
 ```dotenv
 VITE_SUPABASE_URL=
 VITE_SUPABASE_PUBLISHABLE_KEY=
+VITE_WHATSAPP_NUMBER=
 ```
+
+`VITE_WHATSAPP_NUMBER` deve receber o número oficial da Insight com DDI e somente
+dígitos. O frontend não possui telefone de fallback: sem essa configuração, o CTA
+permanece visível quando há contexto, mas desabilitado, evitando encaminhar o usuário
+para um destino inventado.
 
 O cliente Supabase é inicializado somente quando solicitado. A página pode ser visualizada sem essas variáveis, mas o upload exige um projeto configurado.
 
@@ -81,3 +90,6 @@ O agendamento horário de retenção está preparado em `supabase/schedules/setu
 ## Arquitetura
 
 Consulte [`docs/ARCHITECTURE_P1.md`](docs/ARCHITECTURE_P1.md) para a foundation, [`docs/ARCHITECTURE_P2.md`](docs/ARCHITECTURE_P2.md) para o fluxo de upload, [`docs/ARCHITECTURE_P3.md`](docs/ARCHITECTURE_P3.md) para análise/viewer, [`docs/ARCHITECTURE_P4.md`](docs/ARCHITECTURE_P4.md) para precificação e [`docs/ARCHITECTURE_P5.md`](docs/ARCHITECTURE_P5.md) para slicing. O deploy completo está em [`docs/DEPLOY_P5.md`](docs/DEPLOY_P5.md) e o relatório da rodada atual em [`docs/DELIVERY_P5_R4.md`](docs/DELIVERY_P5_R4.md).
+
+A rodada de apresentação está documentada em
+[`docs/DELIVERY_UI_UX_HARDENING.md`](docs/DELIVERY_UI_UX_HARDENING.md).

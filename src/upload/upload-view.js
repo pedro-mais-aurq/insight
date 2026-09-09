@@ -22,8 +22,8 @@ const ERROR_MESSAGES = Object.freeze({
   [UPLOAD_ERROR_CODES.REMOVE_FAILED]: "Não foi possível remover o arquivo. Tente novamente."
 });
 
-export function createUploadView(root, config) {
-  const elements = getElements(root);
+export function createUploadView(root, config, { messageRoot = root } = {}) {
+  const elements = getElements(root, messageRoot);
   let bound = false;
   let dragDepth = 0;
 
@@ -103,7 +103,6 @@ export function createUploadView(root, config) {
     );
 
     renderHeading(elements, state);
-    renderMetadata(elements, state);
     renderStatus(elements, state);
 
     elements.dropzone.hidden = !showsDropzone;
@@ -144,40 +143,17 @@ export function createUploadView(root, config) {
   });
 }
 
-export function formatFileSize(sizeBytes) {
-  if (!Number.isFinite(sizeBytes) || sizeBytes < 0) {
-    return "";
-  }
-
-  if (sizeBytes < 1024) {
-    return `${sizeBytes} B`;
-  }
-
-  const units = ["KB", "MB", "GB", "TB"];
-  let value = sizeBytes / 1024;
-  let unitIndex = 0;
-
-  while (value >= 1024 && unitIndex < units.length - 1) {
-    value /= 1024;
-    unitIndex += 1;
-  }
-
-  const rounded = Math.round(value * 10) / 10;
-  const formatted = String(rounded).replace(".", ",");
-
-  return `${formatted} ${units[unitIndex]}`;
-}
-
-function getElements(root) {
-  const selectors = {
+function getElements(root, messageRoot) {
+  const panelSelectors = {
     eyebrow: "[data-upload-eyebrow]",
     title: "[data-upload-title]",
-    metadata: "[data-upload-file-meta]",
     dropzone: "[data-upload-dropzone]",
     input: "[data-upload-input]",
     select: "[data-upload-select]",
-    status: "[data-upload-status]",
     limits: "[data-upload-limits]",
+  };
+  const toolSelectors = {
+    status: "[data-upload-status]",
     actions: "[data-upload-actions]",
     retry: "[data-upload-retry]",
     replace: "[data-upload-replace]",
@@ -185,8 +161,11 @@ function getElements(root) {
   };
 
   return Object.fromEntries(
-    Object.entries(selectors).map(([key, selector]) => {
-      const element = root.querySelector(selector);
+    [
+      ...Object.entries(panelSelectors).map(([key, selector]) => [key, selector, root]),
+      ...Object.entries(toolSelectors).map(([key, selector]) => [key, selector, messageRoot])
+    ].map(([key, selector, scope]) => {
+      const element = scope.querySelector(selector);
 
       if (!element) {
         throw new Error(`Elemento obrigatório ausente: ${selector}`);
@@ -198,35 +177,15 @@ function getElements(root) {
 }
 
 function renderHeading(elements, state) {
+  elements.eyebrow.hidden = state.status !== UPLOAD_STATES.IDLE;
+
   if (state.status === UPLOAD_STATES.IDLE) {
     elements.eyebrow.textContent = "Arquivo 3D";
     elements.title.innerHTML = "Solte seu<br>modelo aqui.";
     return;
   }
 
-  const labels = {
-    [UPLOAD_STATES.INVALID]: "Arquivo recusado",
-    [UPLOAD_STATES.UPLOADING]: "Enviando modelo",
-    [UPLOAD_STATES.UPLOADED]: "Modelo anexado",
-    [UPLOAD_STATES.UPLOAD_ERROR]: "Falha no envio",
-    [UPLOAD_STATES.ANALYZING]: "Analisando modelo",
-    [UPLOAD_STATES.READY]: "Modelo analisado",
-    [UPLOAD_STATES.ANALYSIS_ERROR]: "Falha na análise"
-  };
-
-  elements.eyebrow.textContent = hasPendingConfirmation(state.error)
-    ? "Confirmação pendente"
-    : labels[state.status] ?? "Modelo selecionado";
   elements.title.textContent = state.originalName ?? "Arquivo sem nome";
-}
-
-function renderMetadata(elements, state) {
-  const hasMetadata = state.extension && Number.isFinite(state.sizeBytes);
-
-  elements.metadata.hidden = !hasMetadata;
-  elements.metadata.textContent = hasMetadata
-    ? `${state.extension.toUpperCase()} · ${formatFileSize(state.sizeBytes)}`
-    : "";
 }
 
 function renderStatus(elements, state) {
@@ -245,6 +204,12 @@ function renderStatus(elements, state) {
     : state.error?.code
     ? getErrorMessage(state.error.code)
     : stateMessages[state.status] ?? "";
+  elements.status.hidden = ![
+    UPLOAD_STATES.VALIDATING,
+    UPLOAD_STATES.INVALID,
+    UPLOAD_STATES.UPLOADING,
+    UPLOAD_STATES.UPLOAD_ERROR
+  ].includes(state.status);
 }
 
 export function getErrorMessage(code) {

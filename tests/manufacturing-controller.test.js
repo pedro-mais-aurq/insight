@@ -19,10 +19,13 @@ function harness() {
   };
   const view = {
     bind: vi.fn((value) => { handlers = value; }), reset: vi.fn(), showWaitingUnit: vi.fn(),
-    showProcessing: vi.fn(), showEstimate: vi.fn(), showError: vi.fn(), getQuantity: vi.fn(() => 2)
+    showPreparing: vi.fn(), showProcessing: vi.fn(), showEstimate: vi.fn(),
+    showError: vi.fn(), getQuantity: vi.fn(() => 2)
   };
   const pricingClient = { estimatePrice: vi.fn().mockResolvedValue({ unitPrice: 10, totalPrice: 20, quantity: 2, currency: "BRL" }) };
-  const pricingView = { showUnavailable: vi.fn(), showEstimate: vi.fn(), showError: vi.fn() };
+  const pricingView = {
+    showUnavailable: vi.fn(), showProcessing: vi.fn(), showEstimate: vi.fn(), showError: vi.fn()
+  };
   const controller = createManufacturingController({ service, view, pricingClient, pricingView, sleep: () => Promise.resolve() });
   return { controller, service, view, pricingClient, pricingView, getHandlers: () => handlers };
 }
@@ -35,7 +38,10 @@ describe("manufacturing controller", () => {
       uploadId: state.id,
       profileKey: "insight-estimation-a1m-pla-020-v1"
     });
+    expect(test.view.showPreparing).toHaveBeenCalledOnce();
+    expect(test.view.showProcessing).toHaveBeenCalledOnce();
     expect(test.view.showEstimate).toHaveBeenCalledWith(expect.objectContaining({ weightGrams: 50, printTimeSeconds: 5400 }));
+    expect(test.pricingView.showProcessing).toHaveBeenCalledOnce();
     expect(test.pricingClient.estimatePrice).toHaveBeenCalledWith({ weightGrams: 50, printTimeHours: 1.5, quantity: 2 });
     expect(test.pricingView.showEstimate).toHaveBeenCalledOnce();
   });
@@ -54,5 +60,32 @@ describe("manufacturing controller", () => {
     await test.controller.onAnalysisReady({ ...state, analysis: { result: { unit: { value: null, confirmed: false } } } });
     expect(test.view.showWaitingUnit).toHaveBeenCalledOnce();
     expect(test.service.startEstimate).not.toHaveBeenCalled();
+  });
+
+  it("distingue falha de preparação de falha posterior do slicer", async () => {
+    const beforePreparation = harness();
+    beforePreparation.service.startEstimate.mockRejectedValueOnce(Object.assign(
+      new Error("SLICER_UNAVAILABLE"),
+      { code: "SLICER_UNAVAILABLE" }
+    ));
+    await beforePreparation.controller.onAnalysisReady(state);
+    expect(beforePreparation.view.showError).toHaveBeenCalledWith(
+      "SLICER_UNAVAILABLE",
+      { prepared: false }
+    );
+
+    const afterPreparation = harness();
+    afterPreparation.service.getEstimate
+      .mockReset()
+      .mockResolvedValueOnce({
+        estimateId: "estimate",
+        estimateStatus: "failed",
+        errorCode: "ORCA_SLICING_ERROR"
+      });
+    await afterPreparation.controller.onAnalysisReady(state);
+    expect(afterPreparation.view.showError).toHaveBeenCalledWith(
+      "ORCA_SLICING_ERROR",
+      { prepared: true }
+    );
   });
 });

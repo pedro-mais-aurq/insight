@@ -1,6 +1,9 @@
 const UNAVAILABLE_MESSAGE = "Estimativa disponível após análise de produção.";
 
-export function initPricingView(root = document.querySelector("[data-pricing-root]")) {
+export function initPricingView(
+  root = document.querySelector("[data-pricing-root]"),
+  { onStateChange = () => {} } = {}
+) {
   if (!root) return null;
 
   const status = root.querySelector("[data-pricing-status]");
@@ -8,27 +11,34 @@ export function initPricingView(root = document.querySelector("[data-pricing-roo
 
   showUnavailable();
 
-  return Object.freeze({ showUnavailable, showEstimate, showError });
+  return Object.freeze({ showUnavailable, showProcessing, showEstimate, showError });
 
   function showUnavailable() {
     root.dataset.pricingState = "unavailable";
     status.textContent = UNAVAILABLE_MESSAGE;
-    price.hidden = true;
-    price.textContent = "";
+    price.textContent = "—";
+    onStateChange({ status: "unavailable" });
+  }
+
+  function showProcessing() {
+    root.dataset.pricingState = "processing";
+    status.textContent = "Calculando o valor…";
+    price.textContent = "—";
+    onStateChange({ status: "processing" });
   }
 
   function showEstimate(estimate) {
     root.dataset.pricingState = "ready";
     status.textContent = `${estimate.quantity} ${estimate.quantity === 1 ? "peça" : "peças"}`;
     price.textContent = formatCurrency(estimate.totalPrice, estimate.currency);
-    price.hidden = false;
+    onStateChange({ status: "completed", estimate });
   }
 
   function showError() {
     root.dataset.pricingState = "error";
     status.textContent = "Não foi possível obter a estimativa agora.";
-    price.hidden = true;
-    price.textContent = "";
+    price.textContent = "—";
+    onStateChange({ status: "failed" });
   }
 }
 

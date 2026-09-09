@@ -3,6 +3,7 @@ import { createAnalysisController } from "../analysis/analysis-controller.js";
 import { createAnalysisService } from "../analysis/analysis-service.js";
 import { createAnalysisView } from "../analysis/analysis-view.js";
 import { createAnalysisWorkerClient } from "../analysis/analysis-worker-client.js";
+import { createEstimateExperience } from "../experience/estimate-experience.js";
 import { getSupabaseClient } from "../lib/supabase.js";
 import { createManufacturingClient } from "../manufacturing/manufacturing-client.js";
 import { createManufacturingController } from "../manufacturing/manufacturing-controller.js";
@@ -22,13 +23,22 @@ export function initUploadShell() {
     return null;
   }
 
-  const uploadView = createUploadView(root, UPLOAD_CONFIG);
-  const analysisView = createAnalysisView(root);
+  const manufacturingRoot = document.querySelector("[data-manufacturing-root]");
+  const printTools = manufacturingRoot?.querySelector("[data-print-tools]") ?? root;
+  const experience = manufacturingRoot
+    ? createEstimateExperience({
+        flowRoot: manufacturingRoot.querySelector("[data-flow-root]"),
+        contactRoot: manufacturingRoot
+      })
+    : null;
+  const uploadView = createUploadView(root, UPLOAD_CONFIG, { messageRoot: printTools });
+  const analysisView = createAnalysisView(root, { messageRoot: printTools });
   const view = {
     ...uploadView,
     render(state) {
       uploadView.render(state);
       analysisView.render(state);
+      experience?.onUploadState(state);
     }
   };
   const uploadService = createUploadService({
@@ -51,12 +61,15 @@ export function initUploadShell() {
     view: analysisView,
     manufacturingHooks
   });
-  const pricingView = initPricingView();
-  const manufacturingRoot = document.querySelector("[data-manufacturing-root]");
+  const pricingView = initPricingView(manufacturingRoot, {
+    onStateChange: (event) => experience?.onPricingState(event)
+  });
   const manufacturingController = manufacturingRoot && pricingView
     ? createManufacturingController({
         service: createManufacturingClient({ getClient: getSupabaseClient }),
-        view: createManufacturingView(manufacturingRoot),
+        view: createManufacturingView(manufacturingRoot, {
+          onStateChange: (event) => experience?.onManufacturingState(event)
+        }),
         pricingClient: createPricingClient({ getClient: getSupabaseClient }),
         pricingView
       })

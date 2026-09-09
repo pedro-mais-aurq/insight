@@ -1,4 +1,4 @@
-FROM ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517 AS orca
+FROM ubuntu:24.04@sha256:571c2ab10651ab3a703fcfcb1b06545f5b53085872dcdf68bed17dd7ef4d72db AS orca
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG UBUNTU_SNAPSHOT=20260707T120000Z
@@ -6,13 +6,8 @@ ARG ORCA_VERSION=2.4.2
 ARG ORCA_APPIMAGE_SHA256=d12fb8c8eac1aecd2dfb6377acd48f994f8fa439ed5292fa532dd82880f029fd
 ARG ORCA_APPIMAGE_URL=https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.4.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage
 
-RUN apt update \
-    && apt install -y --no-install-recommends ca-certificates \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt install -y --no-install-recommends \
-      --update \
-      --snapshot "${UBUNTU_SNAPSHOT}" \
-      ca-certificates curl nodejs \
+RUN apt update --snapshot "${UBUNTU_SNAPSHOT}" \
+    && apt install -y --no-install-recommends --snapshot "${UBUNTU_SNAPSHOT}" ca-certificates curl nodejs \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
@@ -23,8 +18,7 @@ RUN curl --fail --location --proto '=https' --tlsv1.2 \
     && ./OrcaSlicer.AppImage --appimage-extract >/dev/null \
     && test -x squashfs-root/AppRun \
     && test -d squashfs-root/resources/profiles
-    
-COPY package.json /build/package.json
+
 COPY src/profile /build/src/profile
 COPY scripts/flatten-presets.js /build/scripts/flatten-presets.js
 ENV ORCA_PROFILE_SOURCE_ROOT=/build/squashfs-root/resources/profiles \
@@ -33,16 +27,12 @@ ENV ORCA_PROFILE_SOURCE_ROOT=/build/squashfs-root/resources/profiles \
     PROFILE_GENERATED_AT=2026-07-07T03:33:00.000Z
 RUN node /build/scripts/flatten-presets.js
 
-FROM ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517 AS runtime
+FROM ubuntu:24.04@sha256:571c2ab10651ab3a703fcfcb1b06545f5b53085872dcdf68bed17dd7ef4d72db AS runtime
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG UBUNTU_SNAPSHOT=20260707T120000Z
-RUN apt update \
-    && apt install -y --no-install-recommends ca-certificates \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt install -y --no-install-recommends \
-      --update \
-      --snapshot "${UBUNTU_SNAPSHOT}" \
+RUN apt update --snapshot "${UBUNTU_SNAPSHOT}" \
+    && apt install -y --no-install-recommends --snapshot "${UBUNTU_SNAPSHOT}" \
       ca-certificates nodejs unzip zip xvfb xauth \
       libwebkit2gtk-4.1-0 libgtk-3-0 libglu1-mesa libgl1 \
       libegl1 libdbus-1-3 libfontconfig1 libfreetype6 \

@@ -25,12 +25,15 @@ export function createManufacturingController({
     }
 
     const current = ++generation;
-    view.showProcessing();
+    let prepared = false;
+    view.showPreparing();
     try {
       const started = await service.startEstimate({
         uploadId: state.id,
         profileKey: "insight-estimation-a1m-pla-020-v1"
       });
+      prepared = true;
+      view.showProcessing();
       let estimate = await service.getEstimate(started.estimateId);
       for (let poll = 0; ["pending", "processing"].includes(estimate.estimateStatus); poll += 1) {
         if (poll >= maxPolls) throw new Error("MANUFACTURING_ESTIMATION_FAILED");
@@ -45,7 +48,7 @@ export function createManufacturingController({
       await reprice();
     } catch (error) {
       if (current !== generation) return;
-      view.showError(error?.code ?? error?.message);
+      view.showError(error?.code ?? error?.message, { prepared });
       pricingView.showUnavailable();
     }
   }
@@ -55,6 +58,7 @@ export function createManufacturingController({
     const normalized = Number.isSafeInteger(quantity) && quantity >= 1 && quantity <= 1000
       ? quantity
       : view.getQuantity();
+    pricingView.showProcessing();
     try {
       const price = await pricingClient.estimatePrice({
         weightGrams: manufacturingEstimate.weightGrams,

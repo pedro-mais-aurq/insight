@@ -25,8 +25,7 @@ describe("pricing view", () => {
 
     expect(root.dataset.pricingState).toBe("unavailable");
     expect(root.status.textContent).toBe(UNAVAILABLE_MESSAGE);
-    expect(root.price.hidden).toBe(true);
-    expect(root.price.textContent).toBe("");
+    expect(root.price.textContent).toBe("—");
   });
 
   it("formata uma estimativa pública em BRL", () => {
@@ -37,6 +36,19 @@ describe("pricing view", () => {
     expect(root.dataset.pricingState).toBe("ready");
     expect(root.status.textContent).toBe("2 peças");
     expect(root.price.textContent).toBe(formatCurrency(205.62, "BRL"));
-    expect(root.price.hidden).toBe(false);
+  });
+
+  it("usa estado indeterminado enquanto calcula o valor", () => {
+    const root = fakeRoot();
+    const updates = [];
+    const view = initPricingView(root, {
+      onStateChange: (event) => updates.push(event.status)
+    });
+    view.showProcessing();
+
+    expect(root.dataset.pricingState).toBe("processing");
+    expect(root.status.textContent).toBe("Calculando o valor…");
+    expect(root.price.textContent).toBe("—");
+    expect(updates).toEqual(["unavailable", "processing"]);
   });
 });

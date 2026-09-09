@@ -25,8 +25,8 @@ const ANALYSIS_WARNING_MESSAGES = Object.freeze({
   VOLUME_UNRELIABLE: "o volume não é confiável"
 });
 
-export function createAnalysisView(root) {
-  const elements = getElements(root);
+export function createAnalysisView(root, { messageRoot = root } = {}) {
+  const elements = getElements(root, messageRoot);
   let bound = false;
   let viewerUnavailable = false;
 
@@ -100,24 +100,6 @@ export function formatVolumeMm3(value) {
   return Number.isFinite(value) ? `${formatNumber(value / 1000)} cm³` : "—";
 }
 
-export function formatCount(value) {
-  return Number.isSafeInteger(value)
-    ? new Intl.NumberFormat("pt-BR").format(value)
-    : "—";
-}
-
-export function integrityLabel(value) {
-  if (value === true) {
-    return "OK";
-  }
-
-  if (value === false) {
-    return "ATENÇÃO";
-  }
-
-  return "NÃO VERIFICADO";
-}
-
 export function getAnalysisErrorMessage(code) {
   return ANALYSIS_ERROR_MESSAGES[code]
     ?? "Não foi possível concluir a análise do modelo.";
@@ -143,23 +125,12 @@ function renderResult(elements, analysis) {
   elements.dimensions.textContent = dimensions
     ? [dimensions.x, dimensions.y, dimensions.z].map(formatLengthMm).join(" × ")
     : "Unidade física não definida";
-  elements.triangles.textContent = formatCount(analysis.geometry.triangleCount);
-  elements.meshes.textContent = formatCount(analysis.geometry.meshCount);
-  elements.vertices.textContent = formatCount(analysis.geometry.rawVertexCount);
   elements.area.textContent = physical
     ? formatAreaMm2(physical.surfaceAreaMm2)
     : "Unidade desconhecida";
   elements.volume.textContent = physical && analysis.volumeReliable
     ? formatVolumeMm3(physical.volumeMm3)
     : "Indisponível ou não confiável";
-  elements.watertight.textContent = integrityLabel(analysis.topology.watertight);
-  elements.openEdges.textContent = formatCount(analysis.topology.openEdgeCount);
-  elements.nonManifold.textContent = formatCount(
-    analysis.topology.nonManifoldEdgeCount
-  );
-  elements.components.textContent = formatCount(
-    analysis.topology.connectedComponentCount
-  );
   elements.warnings.hidden = analysis.warnings.length === 0;
   elements.warnings.textContent = analysis.warnings.length > 0
     ? `Atenção: ${analysis.warnings.map(getAnalysisWarningMessage).join("; ")}.`
@@ -188,31 +159,29 @@ function formatNumber(value) {
   }).format(value);
 }
 
-function getElements(root) {
-  const selectors = {
+function getElements(root, messageRoot) {
+  const panelSelectors = {
     panel: "[data-analysis-panel]",
-    stage: "[data-analysis-stage]",
-    error: "[data-analysis-error]",
-    retry: "[data-analysis-retry]",
     result: "[data-analysis-result]",
     unit: "[data-analysis-unit]",
     dimensions: "[data-analysis-dimensions]",
-    triangles: "[data-analysis-triangles]",
-    meshes: "[data-analysis-meshes]",
-    vertices: "[data-analysis-vertices]",
     area: "[data-analysis-area]",
     volume: "[data-analysis-volume]",
-    watertight: "[data-analysis-watertight]",
-    openEdges: "[data-analysis-open-edges]",
-    nonManifold: "[data-analysis-non-manifold]",
-    components: "[data-analysis-components]",
+    viewer: "[data-model-viewer]"
+  };
+  const noticeSelectors = {
+    stage: "[data-analysis-stage]",
+    error: "[data-analysis-error]",
+    retry: "[data-analysis-retry]",
     warnings: "[data-analysis-warnings]",
-    viewer: "[data-model-viewer]",
     viewerUnavailable: "[data-viewer-unavailable]"
   };
 
-  return Object.fromEntries(Object.entries(selectors).map(([key, selector]) => {
-    const element = root.querySelector(selector);
+  return Object.fromEntries([
+    ...Object.entries(panelSelectors).map(([key, selector]) => [key, selector, root]),
+    ...Object.entries(noticeSelectors).map(([key, selector]) => [key, selector, messageRoot])
+  ].map(([key, selector, scope]) => {
+    const element = scope.querySelector(selector);
 
     if (!element) {
       throw new Error(`Elemento obrigatório ausente: ${selector}`);
