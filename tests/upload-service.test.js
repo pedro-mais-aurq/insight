@@ -64,7 +64,7 @@ function createClientMock({
 }
 
 describe("createUploadService", () => {
-  it("envia somente metadata, usa bucket/path do contrato e conclui por uploadId", async () => {
+  it("envia metadata e clientSlug, usa bucket/path do contrato e conclui por uploadId", async () => {
     const mocks = createClientMock();
     const onCreated = vi.fn();
     const service = createUploadService({
@@ -85,7 +85,7 @@ describe("createUploadService", () => {
     });
 
     expect(mocks.invoke).toHaveBeenNthCalledWith(1, "create-model-upload", {
-      body: metadata
+      body: { ...metadata, clientSlug: "insight" }
     });
     expect(mocks.from).toHaveBeenCalledWith("model-uploads");
     expect(mocks.uploadToSignedUrl).toHaveBeenCalledWith(
@@ -95,7 +95,7 @@ describe("createUploadService", () => {
       { contentType: "application/octet-stream" }
     );
     expect(mocks.invoke).toHaveBeenNthCalledWith(2, "complete-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
     expect(onCreated).toHaveBeenCalledWith({ uploadId, storagePath });
   });
@@ -118,10 +118,10 @@ describe("createUploadService", () => {
     });
 
     expect(mocks.invoke).toHaveBeenLastCalledWith("remove-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
     expect(mocks.invoke).not.toHaveBeenCalledWith("complete-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
   });
 
@@ -157,10 +157,10 @@ describe("createUploadService", () => {
     expect(onCreated).toHaveBeenCalledWith({ uploadId, storagePath });
     expect(mocks.uploadToSignedUrl).toHaveBeenCalledOnce();
     expect(mocks.invoke).toHaveBeenCalledWith("complete-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
     expect(mocks.invoke).not.toHaveBeenCalledWith("remove-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
   });
 
@@ -186,7 +186,7 @@ describe("createUploadService", () => {
     });
 
     expect(mocks.invoke).not.toHaveBeenCalledWith("remove-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
   });
 
@@ -217,7 +217,7 @@ describe("createUploadService", () => {
       });
 
       expect(mocks.invoke).not.toHaveBeenCalledWith("remove-model-upload", {
-        body: { uploadId }
+        body: { uploadId, clientSlug: "insight" }
       });
     }
   );
@@ -233,7 +233,7 @@ describe("createUploadService", () => {
 
     expect(mocks.invoke).toHaveBeenCalledTimes(1);
     expect(mocks.invoke).toHaveBeenCalledWith("complete-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
     expect(mocks.from).not.toHaveBeenCalled();
   });
@@ -268,7 +268,7 @@ describe("createUploadService", () => {
     await service.removeUpload(uploadId);
 
     expect(mocks.invoke).toHaveBeenCalledWith("remove-model-upload", {
-      body: { uploadId }
+      body: { uploadId, clientSlug: "insight" }
     });
   });
 });

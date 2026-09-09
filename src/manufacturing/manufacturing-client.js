@@ -1,3 +1,4 @@
+import { APP_CLIENT } from "../config/client.config.js";
 import { getSupabaseClient } from "../lib/supabase.js";
 import {
   MANUFACTURING_ERROR_CODES,
@@ -38,7 +39,9 @@ export function createManufacturingClient({ getClient = getSupabaseClient } = {}
 async function invoke(client, name, body) {
   let response;
   try {
-    response = await client.functions.invoke(name, { body });
+    response = await client.functions.invoke(name, {
+      body: { ...body, clientSlug: APP_CLIENT.slug }
+    });
   } catch (error) {
     throw failure(error);
   }

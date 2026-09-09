@@ -32,7 +32,9 @@ describe("pricing client", () => {
       quantity: 1,
       currency: "BRL"
     });
-    expect(test.invoke).toHaveBeenCalledWith("estimate-model-price", { body: input });
+    expect(test.invoke).toHaveBeenCalledWith("estimate-model-price", {
+      body: { ...input, clientSlug: "insight" }
+    });
   });
 
   it("preserva códigos públicos conhecidos", async () => {

@@ -1,3 +1,4 @@
+import { APP_CLIENT } from "../config/client.config.js";
 import { UPLOAD_CONFIG } from "../config/upload.config.js";
 import { classifyCompleteError } from "./complete-error-classifier.js";
 import { UPLOAD_ERROR_CODES } from "./file-validator.js";
@@ -138,7 +139,9 @@ async function invokeFunction(client, functionName, body, fallbackCode) {
   let response;
 
   try {
-    response = await client.functions.invoke(functionName, { body });
+    response = await client.functions.invoke(functionName, {
+      body: { ...body, clientSlug: APP_CLIENT.slug }
+    });
   } catch (error) {
     throw new UploadServiceError(fallbackCode, { cause: error });
   }

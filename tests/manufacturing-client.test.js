@@ -18,6 +18,16 @@ describe("manufacturing client", () => {
     expect(await client.startEstimate({ uploadId: estimateId, profileKey: "insight-estimation-a1m-pla-020-v1" }))
       .toMatchObject({ estimateId, estimateStatus: "processing" });
     expect(await client.getEstimate(estimateId)).toMatchObject({ weightGrams: 63.51, printTimeSeconds: 4571 });
+    expect(invoke).toHaveBeenNthCalledWith(1, "start-manufacturing-estimate", {
+      body: {
+        uploadId: estimateId,
+        profileKey: "insight-estimation-a1m-pla-020-v1",
+        clientSlug: "insight"
+      }
+    });
+    expect(invoke).toHaveBeenNthCalledWith(2, "get-manufacturing-estimate", {
+      body: { estimateId, clientSlug: "insight" }
+    });
   });
 
   it("aceita falha terminal já concluída pelo preflight do backend", async () => {

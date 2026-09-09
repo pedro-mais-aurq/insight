@@ -1,3 +1,4 @@
+import { APP_CLIENT } from "../config/client.config.js";
 import { getSupabaseClient } from "../lib/supabase.js";
 import {
   PRICING_ERROR_CODES,
@@ -16,7 +17,7 @@ export function createPricingClient({ getClient = getSupabaseClient } = {}) {
 
     try {
       response = await getClient().functions.invoke("estimate-model-price", {
-        body: input
+        body: { ...input, clientSlug: APP_CLIENT.slug }
       });
     } catch (error) {
       throw new PricingClientError(PRICING_ERROR_CODES.PRICE_ESTIMATION_FAILED, {

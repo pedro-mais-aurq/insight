@@ -14,6 +14,38 @@ function serviceWithResponse(response) {
 }
 
 describe("createAnalysisService", () => {
+  it("inclui clientSlug ao iniciar a análise", async () => {
+    const response = { uploadId, analysisStatus: "processing" };
+    const test = serviceWithResponse({ data: response, error: null });
+
+    await expect(test.service.startModelAnalysis(uploadId)).resolves.toEqual(response);
+    expect(test.invoke).toHaveBeenCalledWith("start-model-analysis", {
+      body: { uploadId, clientSlug: "insight" }
+    });
+  });
+
+  it("inclui clientSlug ao salvar a análise concluída", async () => {
+    const result = { volumeCm3: 10 };
+    const response = { uploadId, analysisStatus: "completed" };
+    const test = serviceWithResponse({ data: response, error: null });
+
+    await expect(test.service.saveCompleted(uploadId, result)).resolves.toEqual(response);
+    expect(test.invoke).toHaveBeenCalledWith("save-model-analysis", {
+      body: { uploadId, status: "completed", result, clientSlug: "insight" }
+    });
+  });
+
+  it("inclui clientSlug ao salvar a análise com falha", async () => {
+    const errorCode = "ANALYSIS_FAILED";
+    const response = { uploadId, analysisStatus: "failed" };
+    const test = serviceWithResponse({ data: response, error: null });
+
+    await expect(test.service.saveFailed(uploadId, errorCode)).resolves.toEqual(response);
+    expect(test.invoke).toHaveBeenCalledWith("save-model-analysis", {
+      body: { uploadId, status: "failed", errorCode, clientSlug: "insight" }
+    });
+  });
+
   it("preserva códigos operacionais conhecidos", async () => {
     const test = serviceWithResponse({
       data: { error: { code: "RATE_LIMITED" } },

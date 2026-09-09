@@ -1,3 +1,4 @@
+import { APP_CLIENT } from "../config/client.config.js";
 import {
   ANALYSIS_ERROR_CODES,
   AnalysisError
@@ -61,7 +62,9 @@ async function invoke(client, functionName, body, fallbackCode) {
   let response;
 
   try {
-    response = await client.functions.invoke(functionName, { body });
+    response = await client.functions.invoke(functionName, {
+      body: { ...body, clientSlug: APP_CLIENT.slug }
+    });
   } catch (error) {
     throw new AnalysisError(fallbackCode, { cause: error });
   }
